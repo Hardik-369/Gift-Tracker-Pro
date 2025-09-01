@@ -54,8 +54,8 @@ A sophisticated, professional-grade gift tracking and management application des
 1. **Download the Project**
    ```bash
    # Clone or download the repository
-   git clone [repository-url]
-   cd gift-tracker-dashboard
+   git clone https://github.com/Hardik-369/Gift-Tracker-Pro
+   cd Gift-Tracker-Pro
    ```
 
 2. **Open the Application**
@@ -248,5 +248,6 @@ This project is licensed under the MIT License - see the [LICENSE](LICENSE) file
 ---
 
 **GiftTracker Pro** - Making gift-giving organized, efficient, and enjoyable.
+
 
 *Version 2.0 - Enhanced with Analytics, Wishlist Management, and Budget Planning*
