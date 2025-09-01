@@ -1,0 +1,1559 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Gift Tracker Dashboard</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/gsap/3.12.2/gsap.min.js"></script>
+    <style>
+        :root {
+            --primary-black: #000000;
+            --secondary-black: #1a1a1a;
+            --accent-black: #333333;
+            --light-gray: #f8f9fa;
+            --medium-gray: #e9ecef;
+            --dark-gray: #6c757d;
+            --pure-white: #ffffff;
+            --border-gray: #dee2e6;
+        }
+        
+        .sidebar-collapsed {
+            transform: translateX(-100%);
+        }
+        .table-container {
+            max-height: 400px;
+            overflow-y: auto;
+        }
+        .modal-backdrop {
+            backdrop-filter: blur(4px);
+        }
+        .page-content {
+            display: none;
+        }
+        .page-content.active {
+            display: block;
+        }
+        .nav-item.active {
+            color: var(--pure-white) !important;
+            background-color: var(--primary-black) !important;
+            border-right: 4px solid var(--pure-white);
+        }
+        .nav-item:hover {
+            background-color: var(--light-gray) !important;
+            color: var(--primary-black) !important;
+        }
+        .professional-shadow {
+            box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
+        }
+        .professional-shadow-lg {
+            box-shadow: 0 4px 8px rgba(0, 0, 0, 0.15);
+        }
+        .btn-primary {
+            background-color: var(--primary-black);
+            border: 1px solid var(--primary-black);
+            color: var(--pure-white);
+        }
+        .btn-primary:hover {
+            background-color: var(--secondary-black);
+            border-color: var(--secondary-black);
+        }
+        .btn-secondary {
+            background-color: var(--pure-white);
+            border: 1px solid var(--primary-black);
+            color: var(--primary-black);
+        }
+        .btn-secondary:hover {
+            background-color: var(--light-gray);
+        }
+        .status-badge {
+            border: 1px solid;
+        }
+        .status-planned {
+            background-color: var(--light-gray);
+            color: var(--primary-black);
+            border-color: var(--primary-black);
+        }
+        .status-purchased {
+            background-color: var(--primary-black);
+            color: var(--pure-white);
+            border-color: var(--primary-black);
+        }
+        .status-sent {
+            background-color: var(--dark-gray);
+            color: var(--pure-white);
+            border-color: var(--dark-gray);
+        }
+        .chart-accent {
+            stroke: var(--primary-black);
+        }
+        .chart-secondary {
+            stroke: var(--dark-gray);
+        }
+        .chart-light {
+            stroke: var(--medium-gray);
+        }
+        .toggle-switch {
+            background-color: var(--border-gray);
+        }
+        .toggle-switch:checked {
+            background-color: var(--primary-black);
+        }
+        .toggle-switch::after {
+            content: '';
+            position: absolute;
+            top: 2px;
+            left: 2px;
+            background-color: var(--pure-white);
+            border-radius: 50%;
+            height: 20px;
+            width: 20px;
+            transition: all 0.3s;
+        }
+        .toggle-switch:checked::after {
+            transform: translateX(100%);
+            border-color: var(--pure-white);
+        }
+        @media (min-width: 768px) {
+            .sidebar-collapsed {
+                transform: translateX(0);
+                width: 80px;
+            }
+            .sidebar-collapsed .sidebar-text {
+                opacity: 0;
+            }
+            .sidebar-collapsed .sidebar-icon {
+                margin: 0 auto;
+            }
+        }
+    </style>
+</head>
+<body class="bg-gray-50" style="background-color: var(--light-gray);">
+    <!-- Sidebar -->
+    <div id="sidebar" class="fixed left-0 top-0 h-full w-64 bg-white professional-shadow-lg z-40 transition-all duration-300" style="background-color: var(--pure-white); border-right: 2px solid var(--border-gray);">
+        <div class="p-6 border-b" style="border-color: var(--border-gray);">
+            <div class="flex items-center space-x-3">
+                <div class="w-8 h-8 rounded-lg flex items-center justify-center" style="background-color: var(--primary-black);">
+                    <i class="fas fa-gift text-white text-sm"></i>
+                </div>
+                <h1 class="sidebar-text text-xl font-bold" style="color: var(--primary-black);">GiftTracker Pro</h1>
+            </div>
+        </div>
+        
+        <nav class="mt-6">
+            <a href="#dashboard" class="nav-item flex items-center px-6 py-3 transition-colors" style="color: var(--dark-gray);" data-page="dashboard">
+                <i class="fas fa-chart-line sidebar-icon w-5 h-5"></i>
+                <span class="sidebar-text ml-3 font-medium">Dashboard</span>
+            </a>
+            <a href="#gifts" class="nav-item flex items-center px-6 py-3 transition-colors" style="color: var(--dark-gray);" data-page="gifts">
+                <i class="fas fa-gifts sidebar-icon w-5 h-5"></i>
+                <span class="sidebar-text ml-3">All Gifts</span>
+            </a>
+            <a href="#recipients" class="nav-item flex items-center px-6 py-3 transition-colors" style="color: var(--dark-gray);" data-page="recipients">
+                <i class="fas fa-users sidebar-icon w-5 h-5"></i>
+                <span class="sidebar-text ml-3">Recipients</span>
+            </a>
+            <a href="#analytics" class="nav-item flex items-center px-6 py-3 transition-colors" style="color: var(--dark-gray);" data-page="analytics">
+                <i class="fas fa-chart-bar sidebar-icon w-5 h-5"></i>
+                <span class="sidebar-text ml-3">Analytics</span>
+            </a>
+            <a href="#wishlist" class="nav-item flex items-center px-6 py-3 transition-colors" style="color: var(--dark-gray);" data-page="wishlist">
+                <i class="fas fa-star sidebar-icon w-5 h-5"></i>
+                <span class="sidebar-text ml-3">Wishlist</span>
+            </a>
+            <a href="#budget" class="nav-item flex items-center px-6 py-3 transition-colors" style="color: var(--dark-gray);" data-page="budget">
+                <i class="fas fa-calculator sidebar-icon w-5 h-5"></i>
+                <span class="sidebar-text ml-3">Budget Planning</span>
+            </a>
+            <a href="#events" class="nav-item flex items-center px-6 py-3 transition-colors" style="color: var(--dark-gray);" data-page="events">
+                <i class="fas fa-calendar sidebar-icon w-5 h-5"></i>
+                <span class="sidebar-text ml-3">Events</span>
+            </a>
+            <a href="#settings" class="nav-item flex items-center px-6 py-3 transition-colors" style="color: var(--dark-gray);" data-page="settings">
+                <i class="fas fa-cog sidebar-icon w-5 h-5"></i>
+                <span class="sidebar-text ml-3">Settings</span>
+            </a>
+        </nav>
+    </div>
+
+    <!-- Main Content -->
+    <div id="main-content" class="ml-64 transition-all duration-300">
+        <!-- Top Navigation -->
+        <header class="bg-white professional-shadow border-b px-6 py-4" style="background-color: var(--pure-white); border-color: var(--border-gray);">
+            <div class="flex items-center justify-between">
+                <div class="flex items-center space-x-4">
+                    <button id="sidebar-toggle" class="md:hidden" style="color: var(--dark-gray);">
+                        <i class="fas fa-bars text-xl"></i>
+                    </button>
+                    <button id="sidebar-collapse" class="hidden md:block" style="color: var(--dark-gray);">
+                        <i class="fas fa-bars text-xl"></i>
+                    </button>
+                    <h2 id="page-title" class="text-2xl font-semibold" style="color: var(--primary-black);">Dashboard</h2>
+                </div>
+                
+                <div class="flex items-center space-x-4">
+                    <div class="relative hidden sm:block">
+                        <input type="text" id="global-search" placeholder="Search..." class="w-64 pl-10 pr-4 py-2 border rounded-lg" style="border-color: var(--border-gray); background-color: var(--pure-white); color: var(--primary-black);">
+                        <i class="fas fa-search absolute left-3 top-1/2 transform -translate-y-1/2" style="color: var(--dark-gray);"></i>
+                    </div>
+                    <button id="notification-btn" class="relative p-2" style="color: var(--dark-gray);">
+                        <i class="fas fa-bell text-xl"></i>
+                        <span id="notification-count" class="absolute -top-1 -right-1 w-5 h-5 text-white text-xs rounded-full flex items-center justify-center" style="background-color: var(--primary-black);">3</span>
+                    </button>
+                    <div class="w-8 h-8 rounded-full flex items-center justify-center cursor-pointer" id="profile-btn" style="background-color: var(--primary-black);">
+                        <i class="fas fa-user text-white text-sm"></i>
+                    </div>
+                </div>
+            </div>
+        </header>
+
+        <!-- Dashboard Page -->
+        <div id="dashboard-page" class="page-content active">
+            <main class="p-6">
+                <!-- KPI Cards -->
+                <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6 mb-8">
+                    <div class="kpi-card bg-white p-6 rounded-xl professional-shadow hover:professional-shadow-lg transition-shadow cursor-pointer" style="background-color: var(--pure-white); border: 1px solid var(--border-gray);">
+                        <div class="flex items-center justify-between">
+                            <div>
+                                <p class="text-sm mb-1" style="color: var(--dark-gray);">Total Gifts</p>
+                                <p id="total-gifts" class="text-2xl font-bold" style="color: var(--primary-black);">12</p>
+                            </div>
+                            <div class="w-12 h-12 rounded-lg flex items-center justify-center" style="background-color: var(--light-gray); border: 1px solid var(--border-gray);">
+                                <i class="fas fa-gift text-xl" style="color: var(--primary-black);"></i>
+                            </div>
+                        </div>
+                    </div>
+
+                    <div class="kpi-card bg-white p-6 rounded-xl professional-shadow hover:professional-shadow-lg transition-shadow cursor-pointer" style="background-color: var(--pure-white); border: 1px solid var(--border-gray);">
+                        <div class="flex items-center justify-between">
+                            <div>
+                                <p class="text-sm mb-1" style="color: var(--dark-gray);">Pending</p>
+                                <p id="pending-gifts" class="text-2xl font-bold" style="color: var(--dark-gray);">5</p>
+                            </div>
+                            <div class="w-12 h-12 rounded-lg flex items-center justify-center" style="background-color: var(--light-gray); border: 1px solid var(--border-gray);">
+                                <i class="fas fa-clock text-xl" style="color: var(--dark-gray);"></i>
+                            </div>
+                        </div>
+                    </div>
+
+                    <div class="kpi-card bg-white p-6 rounded-xl professional-shadow hover:professional-shadow-lg transition-shadow cursor-pointer" style="background-color: var(--pure-white); border: 1px solid var(--border-gray);">
+                        <div class="flex items-center justify-between">
+                            <div>
+                                <p class="text-sm mb-1" style="color: var(--dark-gray);">Sent</p>
+                                <p id="sent-gifts" class="text-2xl font-bold" style="color: var(--primary-black);">7</p>
+                            </div>
+                            <div class="w-12 h-12 rounded-lg flex items-center justify-center" style="background-color: var(--primary-black);">
+                                <i class="fas fa-check-circle text-xl text-white"></i>
+                            </div>
+                        </div>
+                    </div>
+
+                    <div class="kpi-card bg-white p-6 rounded-xl professional-shadow hover:professional-shadow-lg transition-shadow cursor-pointer" style="background-color: var(--pure-white); border: 1px solid var(--border-gray);">
+                        <div class="flex items-center justify-between">
+                            <div>
+                                <p class="text-sm mb-1" style="color: var(--dark-gray);">Budget Used</p>
+                                <p id="budget-used" class="text-2xl font-bold" style="color: var(--primary-black);">$1,250</p>
+                            </div>
+                            <div class="w-12 h-12 rounded-lg flex items-center justify-center" style="background-color: var(--light-gray); border: 1px solid var(--border-gray);">
+                                <i class="fas fa-dollar-sign text-xl" style="color: var(--primary-black);"></i>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Charts Section -->
+                <div class="grid grid-cols-1 lg:grid-cols-2 gap-6 mb-8">
+                    <div class="bg-white p-6 rounded-xl professional-shadow" style="background-color: var(--pure-white); border: 1px solid var(--border-gray);">
+                        <h3 class="text-lg font-semibold mb-4" style="color: var(--primary-black);">Gift Status Overview</h3>
+                        <div class="h-48 flex items-center justify-center">
+                            <svg width="200" height="200" viewBox="0 0 200 200" class="transform -rotate-90">
+                                <circle cx="100" cy="100" r="80" fill="none" stroke="var(--medium-gray)" stroke-width="20"/>
+                                <circle cx="100" cy="100" r="80" fill="none" stroke="var(--primary-black)" stroke-width="20" 
+                                        stroke-dasharray="351.86" stroke-dashoffset="100" class="transition-all duration-500"/>
+                                <circle cx="100" cy="100" r="60" fill="none" stroke="var(--dark-gray)" stroke-width="20" 
+                                        stroke-dasharray="251.33" stroke-dashoffset="125.67" class="transition-all duration-500"/>
+                                <circle cx="100" cy="100" r="40" fill="none" stroke="var(--accent-black)" stroke-width="20" 
+                                        stroke-dasharray="125.66" stroke-dashoffset="62.83" class="transition-all duration-500"/>
+                            </svg>
+                        </div>
+                        <div class="flex justify-center space-x-4 mt-4">
+                            <div class="flex items-center">
+                                <div class="w-3 h-3 rounded-full mr-2" style="background-color: var(--primary-black);"></div>
+                                <span class="text-sm" style="color: var(--dark-gray);">Sent</span>
+                            </div>
+                            <div class="flex items-center">
+                                <div class="w-3 h-3 rounded-full mr-2" style="background-color: var(--dark-gray);"></div>
+                                <span class="text-sm" style="color: var(--dark-gray);">Purchased</span>
+                            </div>
+                            <div class="flex items-center">
+                                <div class="w-3 h-3 rounded-full mr-2" style="background-color: var(--accent-black);"></div>
+                                <span class="text-sm" style="color: var(--dark-gray);">Planned</span>
+                            </div>
+                        </div>
+                    </div>
+
+                    <div class="bg-white p-6 rounded-xl professional-shadow" style="background-color: var(--pure-white); border: 1px solid var(--border-gray);">
+                        <h3 class="text-lg font-semibold mb-4" style="color: var(--primary-black);">Monthly Budget Trend</h3>
+                        <div class="h-48 flex items-end justify-between space-x-2">
+                            <div class="flex flex-col items-center">
+                                <div class="w-8 rounded-t" style="height: 60px; background-color: var(--accent-black);"></div>
+                                <span class="text-xs mt-2" style="color: var(--dark-gray);">Jan</span>
+                            </div>
+                            <div class="flex flex-col items-center">
+                                <div class="w-8 rounded-t" style="height: 80px; background-color: var(--dark-gray);"></div>
+                                <span class="text-xs mt-2" style="color: var(--dark-gray);">Feb</span>
+                            </div>
+                            <div class="flex flex-col items-center">
+                                <div class="w-8 rounded-t" style="height: 120px; background-color: var(--primary-black);"></div>
+                                <span class="text-xs mt-2" style="color: var(--dark-gray);">Mar</span>
+                            </div>
+                            <div class="flex flex-col items-center">
+                                <div class="w-8 rounded-t" style="height: 100px; background-color: var(--dark-gray);"></div>
+                                <span class="text-xs mt-2" style="color: var(--dark-gray);">Apr</span>
+                            </div>
+                            <div class="flex flex-col items-center">
+                                <div class="w-8 rounded-t" style="height: 140px; background-color: var(--secondary-black);"></div>
+                                <span class="text-xs mt-2" style="color: var(--dark-gray);">May</span>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Recent Gifts Preview -->
+                <div class="bg-white rounded-xl professional-shadow overflow-hidden" style="background-color: var(--pure-white); border: 1px solid var(--border-gray);">
+                    <div class="p-6 border-b" style="border-color: var(--border-gray);">
+                        <div class="flex items-center justify-between">
+                            <h3 class="text-lg font-semibold" style="color: var(--primary-black);">Recent Gifts</h3>
+                            <button onclick="navigateTo('gifts')" class="font-medium btn-secondary px-3 py-1 rounded transition-colors" style="color: var(--primary-black);">
+                                View All <i class="fas fa-arrow-right ml-1"></i>
+                            </button>
+                        </div>
+                    </div>
+                    <div id="recent-gifts-preview" class="p-6">
+                        <!-- Recent gifts will be populated here -->
+                    </div>
+                </div>
+            </main>
+        </div>
+
+        <!-- All Gifts Page -->
+        <div id="gifts-page" class="page-content">
+            <main class="p-6">
+                <div class="bg-white rounded-xl professional-shadow overflow-hidden" style="background-color: var(--pure-white); border: 1px solid var(--border-gray);">
+                    <div class="p-6 border-b" style="border-color: var(--border-gray);">
+                        <div class="flex flex-col sm:flex-row sm:items-center sm:justify-between">
+                            <h3 class="text-lg font-semibold mb-4 sm:mb-0" style="color: var(--primary-black);">All Gifts</h3>
+                            <div class="flex flex-col sm:flex-row space-y-2 sm:space-y-0 sm:space-x-3">
+                                <select id="status-filter" class="px-3 py-2 border rounded-lg" style="border-color: var(--border-gray); background-color: var(--pure-white); color: var(--primary-black);">
+                                    <option value="">All Status</option>
+                                    <option value="planned">Planned</option>
+                                    <option value="purchased">Purchased</option>
+                                    <option value="sent">Sent</option>
+                                </select>
+                                <button id="add-gift-btn" class="px-4 py-2 btn-primary rounded-lg transition-colors">
+                                    <i class="fas fa-plus mr-2"></i>Add Gift
+                                </button>
+                            </div>
+                        </div>
+                    </div>
+
+                    <div class="table-container">
+                        <table class="w-full">
+                            <thead class="sticky top-0" style="background-color: var(--light-gray);">
+                                <tr>
+                                    <th class="px-6 py-3 text-left text-xs font-medium uppercase tracking-wider" style="color: var(--dark-gray);">Recipient</th>
+                                    <th class="px-6 py-3 text-left text-xs font-medium uppercase tracking-wider" style="color: var(--dark-gray);">Gift</th>
+                                    <th class="px-6 py-3 text-left text-xs font-medium uppercase tracking-wider" style="color: var(--dark-gray);">Price</th>
+                                    <th class="px-6 py-3 text-left text-xs font-medium uppercase tracking-wider" style="color: var(--dark-gray);">Status</th>
+                                    <th class="px-6 py-3 text-left text-xs font-medium uppercase tracking-wider" style="color: var(--dark-gray);">Actions</th>
+                                </tr>
+                            </thead>
+                            <tbody id="gifts-table-body" class="bg-white divide-y" style="background-color: var(--pure-white); border-color: var(--border-gray);">
+                                <!-- Dynamic content will be inserted here -->
+                            </tbody>
+                        </table>
+                    </div>
+                </div>
+            </main>
+        </div>
+
+        <!-- Recipients Page -->
+        <div id="recipients-page" class="page-content">
+            <main class="p-6">
+                <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6 mb-8">
+                    <div class="bg-white p-6 rounded-xl professional-shadow" style="background-color: var(--pure-white); border: 1px solid var(--border-gray);">
+                        <div class="flex items-center justify-between mb-4">
+                            <h3 class="text-lg font-semibold" style="color: var(--primary-black);">Total Recipients</h3>
+                            <i class="fas fa-users text-2xl" style="color: var(--primary-black);"></i>
+                        </div>
+                        <p id="total-recipients" class="text-3xl font-bold" style="color: var(--primary-black);">8</p>
+                    </div>
+                    <div class="bg-white p-6 rounded-xl professional-shadow" style="background-color: var(--pure-white); border: 1px solid var(--border-gray);">
+                        <div class="flex items-center justify-between mb-4">
+                            <h3 class="text-lg font-semibold" style="color: var(--primary-black);">Active This Month</h3>
+                            <i class="fas fa-chart-line text-2xl" style="color: var(--primary-black);"></i>
+                        </div>
+                        <p id="active-recipients" class="text-3xl font-bold" style="color: var(--primary-black);">5</p>
+                    </div>
+                    <div class="bg-white p-6 rounded-xl professional-shadow" style="background-color: var(--pure-white); border: 1px solid var(--border-gray);">
+                        <div class="flex items-center justify-between mb-4">
+                            <h3 class="text-lg font-semibold" style="color: var(--primary-black);">Avg. Gifts per Person</h3>
+                            <i class="fas fa-gift text-2xl" style="color: var(--primary-black);"></i>
+                        </div>
+                        <p id="avg-gifts" class="text-3xl font-bold" style="color: var(--primary-black);">2.3</p>
+                    </div>
+                </div>
+
+                <div class="bg-white rounded-xl professional-shadow overflow-hidden" style="background-color: var(--pure-white); border: 1px solid var(--border-gray);">
+                    <div class="p-6 border-b" style="border-color: var(--border-gray);">
+                        <div class="flex items-center justify-between">
+                            <h3 class="text-lg font-semibold" style="color: var(--primary-black);">Recipients List</h3>
+                            <button id="add-recipient-btn" class="px-4 py-2 btn-primary rounded-lg transition-colors">
+                                <i class="fas fa-plus mr-2"></i>Add Recipient
+                            </button>
+                        </div>
+                    </div>
+                    <div id="recipients-list" class="p-6">
+                        <!-- Recipients will be populated here -->
+                    </div>
+                </div>
+            </main>
+        </div>
+
+        <!-- Analytics Page -->
+        <div id="analytics-page" class="page-content">
+            <main class="p-6">
+                <!-- Analytics KPIs -->
+                <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6 mb-8">
+                    <div class="bg-white p-6 rounded-xl professional-shadow" style="background-color: var(--pure-white); border: 1px solid var(--border-gray);">
+                        <div class="flex items-center justify-between mb-4">
+                            <h3 class="text-lg font-semibold" style="color: var(--primary-black);">Gift Trends</h3>
+                            <i class="fas fa-trending-up text-2xl" style="color: var(--primary-black);"></i>
+                        </div>
+                        <p id="gift-trend" class="text-3xl font-bold" style="color: var(--primary-black);">+15%</p>
+                        <p class="text-sm" style="color: var(--dark-gray);">vs last month</p>
+                    </div>
+                    <div class="bg-white p-6 rounded-xl professional-shadow" style="background-color: var(--pure-white); border: 1px solid var(--border-gray);">
+                        <div class="flex items-center justify-between mb-4">
+                            <h3 class="text-lg font-semibold" style="color: var(--primary-black);">Avg Gift Value</h3>
+                            <i class="fas fa-dollar-sign text-2xl" style="color: var(--primary-black);"></i>
+                        </div>
+                        <p id="avg-gift-value" class="text-3xl font-bold" style="color: var(--primary-black);">$95</p>
+                        <p class="text-sm" style="color: var(--dark-gray);">per gift</p>
+                    </div>
+                    <div class="bg-white p-6 rounded-xl professional-shadow" style="background-color: var(--pure-white); border: 1px solid var(--border-gray);">
+                        <div class="flex items-center justify-between mb-4">
+                            <h3 class="text-lg font-semibold" style="color: var(--primary-black);">Success Rate</h3>
+                            <i class="fas fa-check-circle text-2xl" style="color: var(--primary-black);"></i>
+                        </div>
+                        <p id="success-rate" class="text-3xl font-bold" style="color: var(--primary-black);">85%</p>
+                        <p class="text-sm" style="color: var(--dark-gray);">gifts delivered</p>
+                    </div>
+                    <div class="bg-white p-6 rounded-xl professional-shadow" style="background-color: var(--pure-white); border: 1px solid var(--border-gray);">
+                        <div class="flex items-center justify-between mb-4">
+                            <h3 class="text-lg font-semibold" style="color: var(--primary-black);">Top Category</h3>
+                            <i class="fas fa-tags text-2xl" style="color: var(--primary-black);"></i>
+                        </div>
+                        <p id="top-category" class="text-2xl font-bold" style="color: var(--primary-black);">Electronics</p>
+                        <p class="text-sm" style="color: var(--dark-gray);">40% of gifts</p>
+                    </div>
+                </div>
+
+                <!-- Analytics Charts -->
+                <div class="grid grid-cols-1 lg:grid-cols-2 gap-6 mb-8">
+                    <div class="bg-white p-6 rounded-xl professional-shadow" style="background-color: var(--pure-white); border: 1px solid var(--border-gray);">
+                        <h3 class="text-lg font-semibold mb-4" style="color: var(--primary-black);">Gift Categories</h3>
+                        <div class="space-y-4">
+                            <div class="flex items-center justify-between">
+                                <span style="color: var(--dark-gray);">Electronics</span>
+                                <div class="flex items-center space-x-2">
+                                    <div class="w-32 h-3 rounded-full" style="background-color: var(--light-gray);">
+                                        <div class="h-3 rounded-full" style="width: 40%; background-color: var(--primary-black);"></div>
+                                    </div>
+                                    <span class="text-sm" style="color: var(--dark-gray);">40%</span>
+                                </div>
+                            </div>
+                            <div class="flex items-center justify-between">
+                                <span style="color: var(--dark-gray);">Books & Media</span>
+                                <div class="flex items-center space-x-2">
+                                    <div class="w-32 h-3 rounded-full" style="background-color: var(--light-gray);">
+                                        <div class="h-3 rounded-full" style="width: 25%; background-color: var(--dark-gray);"></div>
+                                    </div>
+                                    <span class="text-sm" style="color: var(--dark-gray);">25%</span>
+                                </div>
+                            </div>
+                            <div class="flex items-center justify-between">
+                                <span style="color: var(--dark-gray);">Home & Garden</span>
+                                <div class="flex items-center space-x-2">
+                                    <div class="w-32 h-3 rounded-full" style="background-color: var(--light-gray);">
+                                        <div class="h-3 rounded-full" style="width: 20%; background-color: var(--accent-black);"></div>
+                                    </div>
+                                    <span class="text-sm" style="color: var(--dark-gray);">20%</span>
+                                </div>
+                            </div>
+                            <div class="flex items-center justify-between">
+                                <span style="color: var(--dark-gray);">Fashion</span>
+                                <div class="flex items-center space-x-2">
+                                    <div class="w-32 h-3 rounded-full" style="background-color: var(--light-gray);">
+                                        <div class="h-3 rounded-full" style="width: 15%; background-color: var(--secondary-black);"></div>
+                                    </div>
+                                    <span class="text-sm" style="color: var(--dark-gray);">15%</span>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                    
+                    <div class="bg-white p-6 rounded-xl professional-shadow" style="background-color: var(--pure-white); border: 1px solid var(--border-gray);">
+                        <h3 class="text-lg font-semibold mb-4" style="color: var(--primary-black);">Smart Insights</h3>
+                        <div class="space-y-4">
+                            <div class="p-4 rounded-lg" style="background-color: var(--light-gray);">
+                                <div class="flex items-center mb-2">
+                                    <i class="fas fa-lightbulb mr-2" style="color: var(--primary-black);"></i>
+                                    <h4 class="font-semibold" style="color: var(--primary-black);">Spending Pattern</h4>
+                                </div>
+                                <p class="text-sm" style="color: var(--dark-gray);">You spend 30% more during holidays.</p>
+                            </div>
+                            <div class="p-4 rounded-lg" style="background-color: var(--light-gray);">
+                                <div class="flex items-center mb-2">
+                                    <i class="fas fa-user-friends mr-2" style="color: var(--primary-black);"></i>
+                                    <h4 class="font-semibold" style="color: var(--primary-black);">Popular Gifts</h4>
+                                </div>
+                                <p class="text-sm" style="color: var(--dark-gray);">Electronics are your most given category.</p>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </main>
+        </div>
+
+        <!-- Wishlist Management Page -->
+        <div id="wishlist-page" class="page-content">
+            <main class="p-6">
+                <div class="grid grid-cols-1 md:grid-cols-3 gap-6 mb-8">
+                    <div class="bg-white p-6 rounded-xl professional-shadow" style="background-color: var(--pure-white); border: 1px solid var(--border-gray);">
+                        <div class="flex items-center justify-between mb-4">
+                            <h3 class="text-lg font-semibold" style="color: var(--primary-black);">Total Wishes</h3>
+                            <i class="fas fa-star text-2xl" style="color: var(--primary-black);"></i>
+                        </div>
+                        <p id="total-wishes" class="text-3xl font-bold" style="color: var(--primary-black);">18</p>
+                    </div>
+                    <div class="bg-white p-6 rounded-xl professional-shadow" style="background-color: var(--pure-white); border: 1px solid var(--border-gray);">
+                        <div class="flex items-center justify-between mb-4">
+                            <h3 class="text-lg font-semibold" style="color: var(--primary-black);">High Priority</h3>
+                            <i class="fas fa-exclamation-circle text-2xl" style="color: var(--primary-black);"></i>
+                        </div>
+                        <p id="high-priority-wishes" class="text-3xl font-bold" style="color: var(--primary-black);">6</p>
+                    </div>
+                    <div class="bg-white p-6 rounded-xl professional-shadow" style="background-color: var(--pure-white); border: 1px solid var(--border-gray);">
+                        <div class="flex items-center justify-between mb-4">
+                            <h3 class="text-lg font-semibold" style="color: var(--primary-black);">Completed</h3>
+                            <i class="fas fa-check-double text-2xl" style="color: var(--primary-black);"></i>
+                        </div>
+                        <p id="completed-wishes" class="text-3xl font-bold" style="color: var(--primary-black);">4</p>
+                    </div>
+                </div>
+
+                <div class="bg-white rounded-xl professional-shadow overflow-hidden" style="background-color: var(--pure-white); border: 1px solid var(--border-gray);">
+                    <div class="p-6 border-b" style="border-color: var(--border-gray);">
+                        <div class="flex items-center justify-between">
+                            <h3 class="text-lg font-semibold" style="color: var(--primary-black);">My Wishlist</h3>
+                            <button id="add-wish-btn" class="px-4 py-2 btn-primary rounded-lg transition-colors">
+                                <i class="fas fa-plus mr-2"></i>Add Wish
+                            </button>
+                        </div>
+                    </div>
+                    <div class="p-6">
+                        <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
+                            <div class="border rounded-lg p-4" style="border-color: var(--border-gray);">
+                                <div class="flex items-start justify-between mb-3">
+                                    <h4 class="font-semibold" style="color: var(--primary-black);">Smart Home Assistant</h4>
+                                    <span class="px-2 py-1 text-xs font-semibold rounded-full status-badge status-planned">High</span>
+                                </div>
+                                <p class="text-sm mb-2" style="color: var(--dark-gray);">For: Mom's Birthday</p>
+                                <p class="text-sm mb-3" style="color: var(--dark-gray);">Voice-controlled smart speaker</p>
+                                <div class="flex items-center justify-between">
+                                    <span class="font-bold" style="color: var(--primary-black);">$129.99</span>
+                                    <button class="text-sm btn-secondary px-2 py-1 rounded">Move to Gifts</button>
+                                </div>
+                            </div>
+                            <div class="border rounded-lg p-4" style="border-color: var(--border-gray);">
+                                <div class="flex items-start justify-between mb-3">
+                                    <h4 class="font-semibold" style="color: var(--primary-black);">Professional Art Set</h4>
+                                    <span class="px-2 py-1 text-xs font-semibold rounded-full status-badge status-purchased">Medium</span>
+                                </div>
+                                <p class="text-sm mb-2" style="color: var(--dark-gray);">For: Sister's Graduation</p>
+                                <p class="text-sm mb-3" style="color: var(--dark-gray);">Complete drawing supplies</p>
+                                <div class="flex items-center justify-between">
+                                    <span class="font-bold" style="color: var(--primary-black);">$89.50</span>
+                                    <button class="text-sm btn-secondary px-2 py-1 rounded">Move to Gifts</button>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </main>
+        </div>
+
+        <!-- Budget Planning Page -->
+        <div id="budget-page" class="page-content">
+            <main class="p-6">
+                <div class="grid grid-cols-1 md:grid-cols-4 gap-6 mb-8">
+                    <div class="bg-white p-6 rounded-xl professional-shadow" style="background-color: var(--pure-white); border: 1px solid var(--border-gray);">
+                        <div class="flex items-center justify-between mb-4">
+                            <h3 class="text-lg font-semibold" style="color: var(--primary-black);">Total Budget</h3>
+                            <i class="fas fa-wallet text-2xl" style="color: var(--primary-black);"></i>
+                        </div>
+                        <p class="text-3xl font-bold" style="color: var(--primary-black);">$2,000</p>
+                    </div>
+                    <div class="bg-white p-6 rounded-xl professional-shadow" style="background-color: var(--pure-white); border: 1px solid var(--border-gray);">
+                        <div class="flex items-center justify-between mb-4">
+                            <h3 class="text-lg font-semibold" style="color: var(--primary-black);">Spent</h3>
+                            <i class="fas fa-credit-card text-2xl" style="color: var(--primary-black);"></i>
+                        </div>
+                        <p class="text-3xl font-bold" style="color: var(--primary-black);">$1,250</p>
+                    </div>
+                    <div class="bg-white p-6 rounded-xl professional-shadow" style="background-color: var(--pure-white); border: 1px solid var(--border-gray);">
+                        <div class="flex items-center justify-between mb-4">
+                            <h3 class="text-lg font-semibold" style="color: var(--primary-black);">Remaining</h3>
+                            <i class="fas fa-piggy-bank text-2xl" style="color: var(--primary-black);"></i>
+                        </div>
+                        <p class="text-3xl font-bold" style="color: var(--primary-black);">$750</p>
+                    </div>
+                    <div class="bg-white p-6 rounded-xl professional-shadow" style="background-color: var(--pure-white); border: 1px solid var(--border-gray);">
+                        <div class="flex items-center justify-between mb-4">
+                            <h3 class="text-lg font-semibold" style="color: var(--primary-black);">Progress</h3>
+                            <i class="fas fa-chart-pie text-2xl" style="color: var(--primary-black);"></i>
+                        </div>
+                        <p class="text-3xl font-bold" style="color: var(--primary-black);">62.5%</p>
+                    </div>
+                </div>
+
+                <div class="grid grid-cols-1 lg:grid-cols-2 gap-6 mb-8">
+                    <div class="bg-white p-6 rounded-xl professional-shadow" style="background-color: var(--pure-white); border: 1px solid var(--border-gray);">
+                        <h3 class="text-lg font-semibold mb-4" style="color: var(--primary-black);">Budget Settings</h3>
+                        <div class="space-y-4">
+                            <div>
+                                <label class="block text-sm font-medium mb-2" style="color: var(--dark-gray);">Annual Budget</label>
+                                <input type="number" value="2000" class="w-full px-3 py-2 border rounded-lg" style="border-color: var(--border-gray);">
+                            </div>
+                            <div>
+                                <label class="block text-sm font-medium mb-2" style="color: var(--dark-gray);">Alert Threshold %</label>
+                                <input type="number" value="80" class="w-full px-3 py-2 border rounded-lg" style="border-color: var(--border-gray);">
+                            </div>
+                            <button class="w-full px-4 py-2 btn-primary rounded-lg">Update Settings</button>
+                        </div>
+                    </div>
+                    
+                    <div class="bg-white p-6 rounded-xl professional-shadow" style="background-color: var(--pure-white); border: 1px solid var(--border-gray);">
+                        <h3 class="text-lg font-semibold mb-4" style="color: var(--primary-black);">Budget Alerts</h3>
+                        <div class="space-y-4">
+                            <div class="flex items-start p-3 rounded-lg" style="background-color: var(--light-gray);">
+                                <i class="fas fa-exclamation-triangle mr-3 mt-1" style="color: var(--primary-black);"></i>
+                                <div>
+                                    <h4 class="font-semibold" style="color: var(--primary-black);">Budget Alert</h4>
+                                    <p class="text-sm" style="color: var(--dark-gray);">62.5% of budget used. Monitor spending.</p>
+                                </div>
+                            </div>
+                            <div class="flex items-start p-3 rounded-lg" style="background-color: var(--light-gray);">
+                                <i class="fas fa-lightbulb mr-3 mt-1" style="color: var(--primary-black);"></i>
+                                <div>
+                                    <h4 class="font-semibold" style="color: var(--primary-black);">Recommendation</h4>
+                                    <p class="text-sm" style="color: var(--dark-gray);">Set aside $150 for Q4 events.</p>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </main>
+        </div>
+
+        <!-- Events Page -->
+        <div id="events-page" class="page-content">
+            <main class="p-6">
+                <div class="grid grid-cols-1 md:grid-cols-3 gap-6 mb-8">
+                    <div class="bg-white p-6 rounded-xl professional-shadow" style="background-color: var(--pure-white); border: 1px solid var(--border-gray);">
+                        <div class="flex items-center justify-between mb-4">
+                            <h3 class="text-lg font-semibold" style="color: var(--primary-black);">Upcoming Events</h3>
+                            <i class="fas fa-calendar-alt text-2xl" style="color: var(--primary-black);"></i>
+                        </div>
+                        <p class="text-3xl font-bold" style="color: var(--primary-black);">4</p>
+                    </div>
+                    <div class="bg-white p-6 rounded-xl professional-shadow" style="background-color: var(--pure-white); border: 1px solid var(--border-gray);">
+                        <div class="flex items-center justify-between mb-4">
+                            <h3 class="text-lg font-semibold" style="color: var(--primary-black);">This Month</h3>
+                            <i class="fas fa-clock text-2xl" style="color: var(--dark-gray);"></i>
+                        </div>
+                        <p class="text-3xl font-bold" style="color: var(--dark-gray);">2</p>
+                    </div>
+                    <div class="bg-white p-6 rounded-xl professional-shadow" style="background-color: var(--pure-white); border: 1px solid var(--border-gray);">
+                        <div class="flex items-center justify-between mb-4">
+                            <h3 class="text-lg font-semibold" style="color: var(--primary-black);">Total Events</h3>
+                            <i class="fas fa-calendar text-2xl" style="color: var(--primary-black);"></i>
+                        </div>
+                        <p class="text-3xl font-bold" style="color: var(--primary-black);">12</p>
+                    </div>
+                </div>
+
+                <div class="bg-white rounded-xl professional-shadow overflow-hidden" style="background-color: var(--pure-white); border: 1px solid var(--border-gray);">
+                    <div class="p-6 border-b" style="border-color: var(--border-gray);">
+                        <div class="flex items-center justify-between">
+                            <h3 class="text-lg font-semibold" style="color: var(--primary-black);">Event Calendar</h3>
+                            <button id="add-event-btn" class="px-4 py-2 btn-primary rounded-lg transition-colors">
+                                <i class="fas fa-plus mr-2"></i>Add Event
+                            </button>
+                        </div>
+                    </div>
+                    <div id="events-calendar" class="p-6">
+                        <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4">
+                            <div class="border-l-4 p-4 rounded" style="background-color: var(--light-gray); border-color: var(--primary-black);">
+                                <div class="flex items-center justify-between">
+                                    <h4 class="font-semibold" style="color: var(--primary-black);">Sarah's Birthday</h4>
+                                    <span class="text-sm" style="color: var(--dark-gray);">Dec 15</span>
+                                </div>
+                                <p class="text-sm mt-1" style="color: var(--dark-gray);">2 gifts planned</p>
+                            </div>
+                            <div class="border-l-4 p-4 rounded" style="background-color: var(--light-gray); border-color: var(--dark-gray);">
+                                <div class="flex items-center justify-between">
+                                    <h4 class="font-semibold" style="color: var(--primary-black);">Christmas</h4>
+                                    <span class="text-sm" style="color: var(--dark-gray);">Dec 25</span>
+                                </div>
+                                <p class="text-sm mt-1" style="color: var(--dark-gray);">8 gifts planned</p>
+                            </div>
+                            <div class="border-l-4 p-4 rounded" style="background-color: var(--light-gray); border-color: var(--accent-black);">
+                                <div class="flex items-center justify-between">
+                                    <h4 class="font-semibold" style="color: var(--primary-black);">New Year</h4>
+                                    <span class="text-sm" style="color: var(--dark-gray);">Jan 1</span>
+                                </div>
+                                <p class="text-sm mt-1" style="color: var(--dark-gray);">3 gifts planned</p>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </main>
+        </div>
+
+        <!-- Settings Page -->
+        <div id="settings-page" class="page-content">
+            <main class="p-6">
+                <div class="max-w-4xl mx-auto space-y-6">
+                    <!-- Profile Settings -->
+                    <div class="bg-white rounded-xl professional-shadow overflow-hidden" style="background-color: var(--pure-white); border: 1px solid var(--border-gray);">
+                        <div class="p-6 border-b" style="border-color: var(--border-gray);">
+                            <h3 class="text-lg font-semibold" style="color: var(--primary-black);">Profile Settings</h3>
+                        </div>
+                        <div class="p-6">
+                            <div class="grid grid-cols-1 md:grid-cols-2 gap-6">
+                                <div>
+                                    <label class="block text-sm font-medium mb-2" style="color: var(--dark-gray);">Full Name</label>
+                                    <input type="text" value="John Smith" class="w-full px-3 py-2 border rounded-lg" style="border-color: var(--border-gray); background-color: var(--pure-white); color: var(--primary-black);">
+                                </div>
+                                <div>
+                                    <label class="block text-sm font-medium mb-2" style="color: var(--dark-gray);">Email</label>
+                                    <input type="email" value="john@example.com" class="w-full px-3 py-2 border rounded-lg" style="border-color: var(--border-gray); background-color: var(--pure-white); color: var(--primary-black);">
+                                </div>
+                                <div>
+                                    <label class="block text-sm font-medium mb-2" style="color: var(--dark-gray);">Default Budget</label>
+                                    <input type="number" value="2000" class="w-full px-3 py-2 border rounded-lg" style="border-color: var(--border-gray); background-color: var(--pure-white); color: var(--primary-black);">
+                                </div>
+                                <div>
+                                    <label class="block text-sm font-medium mb-2" style="color: var(--dark-gray);">Currency</label>
+                                    <select class="w-full px-3 py-2 border rounded-lg" style="border-color: var(--border-gray); background-color: var(--pure-white); color: var(--primary-black);">
+                                        <option value="USD">USD ($)</option>
+                                        <option value="EUR">EUR (€)</option>
+                                        <option value="GBP">GBP (£)</option>
+                                    </select>
+                                </div>
+                            </div>
+                            <button class="mt-6 px-6 py-2 btn-primary rounded-lg transition-colors">
+                                Save Changes
+                            </button>
+                        </div>
+                    </div>
+
+                    <!-- Notification Settings -->
+                    <div class="bg-white rounded-xl professional-shadow overflow-hidden" style="background-color: var(--pure-white); border: 1px solid var(--border-gray);">
+                        <div class="p-6 border-b" style="border-color: var(--border-gray);">
+                            <h3 class="text-lg font-semibold" style="color: var(--primary-black);">Notification Settings</h3>
+                        </div>
+                        <div class="p-6 space-y-4">
+                            <div class="flex items-center justify-between">
+                                <div>
+                                    <h4 class="font-medium" style="color: var(--primary-black);">Email Notifications</h4>
+                                    <p class="text-sm" style="color: var(--dark-gray);">Receive email updates about your gifts</p>
+                                </div>
+                                <label class="relative inline-flex items-center cursor-pointer">
+                                    <input type="checkbox" class="sr-only peer" checked>
+                                    <div class="w-11 h-6 bg-gray-200 peer-focus:outline-none rounded-full peer peer-checked:after:translate-x-full peer-checked:after:border-white after:content-[''] after:absolute after:top-[2px] after:left-[2px] after:bg-white after:rounded-full after:h-5 after:w-5 after:transition-all peer-checked:bg-black"></div>
+                                </label>
+                            </div>
+                            <div class="flex items-center justify-between">
+                                <div>
+                                    <h4 class="font-medium" style="color: var(--primary-black);">Push Notifications</h4>
+                                    <p class="text-sm" style="color: var(--dark-gray);">Get notified about upcoming events</p>
+                                </div>
+                                <label class="relative inline-flex items-center cursor-pointer">
+                                    <input type="checkbox" class="sr-only peer">
+                                    <div class="w-11 h-6 bg-gray-200 peer-focus:outline-none rounded-full peer peer-checked:after:translate-x-full peer-checked:after:border-white after:content-[''] after:absolute after:top-[2px] after:left-[2px] after:bg-white after:rounded-full after:h-5 after:w-5 after:transition-all peer-checked:bg-black"></div>
+                                </label>
+                            </div>
+                            <div class="flex items-center justify-between">
+                                <div>
+                                    <h4 class="font-medium" style="color: var(--primary-black);">Weekly Summary</h4>
+                                    <p class="text-sm" style="color: var(--dark-gray);">Get a weekly report of your gift activities</p>
+                                </div>
+                                <label class="relative inline-flex items-center cursor-pointer">
+                                    <input type="checkbox" class="sr-only peer" checked>
+                                    <div class="w-11 h-6 bg-gray-200 peer-focus:outline-none rounded-full peer peer-checked:after:translate-x-full peer-checked:after:border-white after:content-[''] after:absolute after:top-[2px] after:left-[2px] after:bg-white after:rounded-full after:h-5 after:w-5 after:transition-all peer-checked:bg-black"></div>
+                                </label>
+                            </div>
+                        </div>
+                    </div>
+
+                    <!-- Data Management -->
+                    <div class="bg-white rounded-xl professional-shadow overflow-hidden" style="background-color: var(--pure-white); border: 1px solid var(--border-gray);">
+                        <div class="p-6 border-b" style="border-color: var(--border-gray);">
+                            <h3 class="text-lg font-semibold" style="color: var(--primary-black);">Data Management</h3>
+                        </div>
+                        <div class="p-6">
+                            <div class="grid grid-cols-1 md:grid-cols-2 gap-4">
+                                <button class="p-4 border rounded-lg transition-colors text-left btn-secondary" style="border-color: var(--border-gray);">
+                                    <i class="fas fa-download text-xl mb-2" style="color: var(--primary-black);"></i>
+                                    <h4 class="font-medium" style="color: var(--primary-black);">Export Data</h4>
+                                    <p class="text-sm" style="color: var(--dark-gray);">Download your gift data as CSV</p>
+                                </button>
+                                <button class="p-4 border rounded-lg transition-colors text-left btn-secondary" style="border-color: var(--border-gray);">
+                                    <i class="fas fa-upload text-xl mb-2" style="color: var(--primary-black);"></i>
+                                    <h4 class="font-medium" style="color: var(--primary-black);">Import Data</h4>
+                                    <p class="text-sm" style="color: var(--dark-gray);">Import gifts from CSV file</p>
+                                </button>
+                                <button class="p-4 border rounded-lg transition-colors text-left" style="border-color: var(--dark-gray); background-color: var(--light-gray);">
+                                    <i class="fas fa-trash text-xl mb-2" style="color: var(--dark-gray);"></i>
+                                    <h4 class="font-medium" style="color: var(--dark-gray);">Clear All Data</h4>
+                                    <p class="text-sm" style="color: var(--dark-gray);">Remove all gifts and recipients</p>
+                                </button>
+                                <button class="p-4 border rounded-lg transition-colors text-left" style="border-color: var(--dark-gray); background-color: var(--light-gray);">
+                                    <i class="fas fa-sync text-xl mb-2" style="color: var(--dark-gray);"></i>
+                                    <h4 class="font-medium" style="color: var(--dark-gray);">Reset Settings</h4>
+                                    <p class="text-sm" style="color: var(--dark-gray);">Restore default settings</p>
+                                </button>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </main>
+        </div>
+    </div>
+
+    <!-- Add Gift Modal -->
+    <div id="modal-backdrop" class="fixed inset-0 bg-black bg-opacity-50 modal-backdrop hidden z-50">
+        <div id="add-gift-modal" class="fixed inset-0 flex items-center justify-center p-4">
+            <div class="bg-white rounded-xl professional-shadow-lg w-full max-w-md transform scale-0 transition-transform" style="background-color: var(--pure-white); border: 1px solid var(--border-gray);">
+                <div class="p-6 border-b" style="border-color: var(--border-gray);">
+                    <div class="flex items-center justify-between">
+                        <h3 class="text-lg font-semibold" style="color: var(--primary-black);">Add New Gift</h3>
+                        <button id="close-modal" style="color: var(--dark-gray);">
+                            <i class="fas fa-times text-xl"></i>
+                        </button>
+                    </div>
+                </div>
+                
+                <div class="p-6">
+                    <form id="add-gift-form" class="space-y-4">
+                        <div>
+                            <label class="block text-sm font-medium mb-2" style="color: var(--dark-gray);">Recipient Name</label>
+                            <input type="text" id="recipient-name" class="w-full px-3 py-2 border rounded-lg" style="border-color: var(--border-gray); background-color: var(--pure-white); color: var(--primary-black);" required>
+                        </div>
+                        
+                        <div>
+                            <label class="block text-sm font-medium mb-2" style="color: var(--dark-gray);">Gift Name</label>
+                            <input type="text" id="gift-name" class="w-full px-3 py-2 border rounded-lg" style="border-color: var(--border-gray); background-color: var(--pure-white); color: var(--primary-black);" required>
+                        </div>
+                        
+                        <div>
+                            <label class="block text-sm font-medium mb-2" style="color: var(--dark-gray);">Price</label>
+                            <input type="number" id="gift-price" step="0.01" class="w-full px-3 py-2 border rounded-lg" style="border-color: var(--border-gray); background-color: var(--pure-white); color: var(--primary-black);" required>
+                        </div>
+                        
+                        <div>
+                            <label class="block text-sm font-medium mb-2" style="color: var(--dark-gray);">Status</label>
+                            <select id="gift-status" class="w-full px-3 py-2 border rounded-lg" style="border-color: var(--border-gray); background-color: var(--pure-white); color: var(--primary-black);">
+                                <option value="planned">Planned</option>
+                                <option value="purchased">Purchased</option>
+                                <option value="sent">Sent</option>
+                            </select>
+                        </div>
+                        
+                        <div class="flex space-x-3 pt-4">
+                            <button type="submit" class="flex-1 btn-primary py-2 rounded-lg transition-colors">
+                                Add Gift
+                            </button>
+                            <button type="button" id="cancel-modal" class="flex-1 btn-secondary py-2 rounded-lg transition-colors">
+                                Cancel
+                            </button>
+                        </div>
+                    </form>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Mobile Overlay -->
+    <div id="mobile-overlay" class="fixed inset-0 bg-black bg-opacity-50 hidden md:hidden z-30"></div>
+
+    <script>
+        // Initialize GSAP
+        gsap.registerPlugin();
+
+        // State management
+        let gifts = [
+            { id: 1, recipient: 'John Doe', gift: 'Wireless Headphones', price: 150, status: 'sent' },
+            { id: 2, recipient: 'Jane Smith', gift: 'Coffee Maker', price: 89.99, status: 'purchased' },
+            { id: 3, recipient: 'Mike Johnson', gift: 'Book Set', price: 45.50, status: 'planned' },
+            { id: 4, recipient: 'Sarah Wilson', gift: 'Yoga Mat', price: 35, status: 'sent' },
+            { id: 5, recipient: 'Tom Brown', gift: 'Smart Watch', price: 299, status: 'planned' }
+        ];
+
+        let recipients = [];
+        let currentPage = 'dashboard';
+        let nextId = 6;
+        let sidebarCollapsed = false;
+
+        // DOM elements
+        const sidebar = document.getElementById('sidebar');
+        const mainContent = document.getElementById('main-content');
+        const sidebarToggle = document.getElementById('sidebar-toggle');
+        const sidebarCollapse = document.getElementById('sidebar-collapse');
+        const mobileOverlay = document.getElementById('mobile-overlay');
+        const addGiftBtn = document.getElementById('add-gift-btn');
+        const modalBackdrop = document.getElementById('modal-backdrop');
+        const addGiftModal = document.getElementById('add-gift-modal');
+        const closeModal = document.getElementById('close-modal');
+        const cancelModal = document.getElementById('cancel-modal');
+        const addGiftForm = document.getElementById('add-gift-form');
+        const statusFilter = document.getElementById('status-filter');
+        const giftsTableBody = document.getElementById('gifts-table-body');
+        const pageTitle = document.getElementById('page-title');
+        const globalSearch = document.getElementById('global-search');
+
+        // Initialize
+        document.addEventListener('DOMContentLoaded', function() {
+            initializeRecipients();
+            renderGifts();
+            updateKPIs();
+            setupEventListeners();
+            setupNavigation();
+            animateKPICards();
+            renderRecentGifts();
+            renderRecipients();
+        });
+
+        // Initialize recipients from gifts
+        function initializeRecipients() {
+            const uniqueRecipients = [...new Set(gifts.map(gift => gift.recipient))];
+            recipients = uniqueRecipients.map((name, index) => ({
+                id: index + 1,
+                name: name,
+                email: `${name.toLowerCase().replace(' ', '.')}@example.com`,
+                totalGifts: gifts.filter(gift => gift.recipient === name).length,
+                totalSpent: gifts.filter(gift => gift.recipient === name)
+                    .reduce((sum, gift) => sum + gift.price, 0)
+            }));
+        }
+
+        // Navigation system
+        function setupNavigation() {
+            const navItems = document.querySelectorAll('.nav-item');
+            navItems.forEach(item => {
+                item.addEventListener('click', function(e) {
+                    e.preventDefault();
+                    const page = this.getAttribute('data-page');
+                    navigateTo(page);
+                });
+            });
+
+            // Set initial active state
+            setActiveNavItem('dashboard');
+        }
+
+        function navigateTo(page) {
+            if (currentPage === page) return;
+
+            // Hide current page
+            const currentPageElement = document.getElementById(`${currentPage}-page`);
+            const newPageElement = document.getElementById(`${page}-page`);
+
+            if (currentPageElement && newPageElement) {
+                // Animate page transition
+                gsap.to(currentPageElement, {
+                    opacity: 0,
+                    x: -50,
+                    duration: 0.3,
+                    ease: "power2.out",
+                    onComplete: () => {
+                        currentPageElement.classList.remove('active');
+                        newPageElement.classList.add('active');
+                        
+                        gsap.fromTo(newPageElement, 
+                            { opacity: 0, x: 50 },
+                            { opacity: 1, x: 0, duration: 0.3, ease: "power2.out" }
+                        );
+                    }
+                });
+
+                // Update page title and navigation
+                currentPage = page;
+                pageTitle.textContent = page.charAt(0).toUpperCase() + page.slice(1);
+                setActiveNavItem(page);
+
+                // Update page-specific content
+                updatePageContent(page);
+
+                // Close mobile sidebar if open
+                if (window.innerWidth < 768) {
+                    closeMobileSidebar();
+                }
+            }
+        }
+
+        function setActiveNavItem(page) {
+            const navItems = document.querySelectorAll('.nav-item');
+            navItems.forEach(item => {
+                item.classList.remove('active');
+                if (item.getAttribute('data-page') === page) {
+                    item.classList.add('active');
+                }
+            });
+        }
+
+        function updatePageContent(page) {
+            switch(page) {
+                case 'dashboard':
+                    renderRecentGifts();
+                    updateKPIs();
+                    break;
+                case 'gifts':
+                    renderGifts();
+                    break;
+                case 'recipients':
+                    renderRecipients();
+                    updateRecipientStats();
+                    break;
+                case 'analytics':
+                    updateAnalytics();
+                    break;
+                case 'wishlist':
+                    renderWishlist();
+                    break;
+                case 'budget':
+                    updateBudgetData();
+                    break;
+                case 'events':
+                    // Events page is static for now
+                    break;
+                case 'settings':
+                    // Settings page is static for now
+                    break;
+            }
+        }
+
+        // Event listeners
+        function setupEventListeners() {
+            sidebarToggle.addEventListener('click', toggleMobileSidebar);
+            sidebarCollapse.addEventListener('click', toggleSidebarCollapse);
+            mobileOverlay.addEventListener('click', closeMobileSidebar);
+            addGiftBtn.addEventListener('click', openModal);
+            closeModal.addEventListener('click', closeModalHandler);
+            cancelModal.addEventListener('click', closeModalHandler);
+            modalBackdrop.addEventListener('click', (e) => {
+                if (e.target === modalBackdrop) closeModalHandler();
+            });
+            addGiftForm.addEventListener('submit', handleAddGift);
+            statusFilter.addEventListener('change', filterGifts);
+            
+            // Global search
+            globalSearch.addEventListener('input', handleGlobalSearch);
+            
+            // Profile and notification buttons
+            document.getElementById('profile-btn').addEventListener('click', () => {
+                navigateTo('settings');
+            });
+            
+            document.getElementById('notification-btn').addEventListener('click', () => {
+                showNotification('You have 3 new notifications!', 'info');
+            });
+        }
+
+        // Global search functionality
+        function handleGlobalSearch(e) {
+            const searchTerm = e.target.value.toLowerCase();
+            
+            if (currentPage === 'gifts') {
+                searchGifts(searchTerm);
+            } else if (currentPage === 'recipients') {
+                searchRecipients(searchTerm);
+            }
+        }
+
+        function searchGifts(searchTerm) {
+            const rows = document.querySelectorAll('#gifts-table-body tr');
+            rows.forEach(row => {
+                const text = row.textContent.toLowerCase();
+                const shouldShow = text.includes(searchTerm);
+                gsap.to(row, { 
+                    opacity: shouldShow ? 1 : 0.3, 
+                    duration: 0.3 
+                });
+            });
+        }
+
+        function searchRecipients(searchTerm) {
+            const cards = document.querySelectorAll('.recipient-card');
+            cards.forEach(card => {
+                const text = card.textContent.toLowerCase();
+                const shouldShow = text.includes(searchTerm);
+                gsap.to(card, { 
+                    opacity: shouldShow ? 1 : 0.3, 
+                    duration: 0.3 
+                });
+            });
+        }
+
+        // Sidebar functionality
+        function toggleMobileSidebar() {
+            const isOpen = !sidebar.classList.contains('sidebar-collapsed');
+            if (isOpen) {
+                closeMobileSidebar();
+            } else {
+                openMobileSidebar();
+            }
+        }
+
+        function openMobileSidebar() {
+            gsap.to(sidebar, { x: 0, duration: 0.3, ease: "power2.out" });
+            sidebar.classList.remove('sidebar-collapsed');
+            mobileOverlay.classList.remove('hidden');
+            gsap.to(mobileOverlay, { opacity: 1, duration: 0.3 });
+        }
+
+        function closeMobileSidebar() {
+            gsap.to(sidebar, { x: '-100%', duration: 0.3, ease: "power2.out" });
+            sidebar.classList.add('sidebar-collapsed');
+            gsap.to(mobileOverlay, { opacity: 0, duration: 0.3, onComplete: () => {
+                mobileOverlay.classList.add('hidden');
+            }});
+        }
+
+        function toggleSidebarCollapse() {
+            sidebarCollapsed = !sidebarCollapsed;
+            
+            if (sidebarCollapsed) {
+                gsap.to(sidebar, { width: 80, duration: 0.3 });
+                gsap.to(mainContent, { marginLeft: 80, duration: 0.3 });
+                gsap.to('.sidebar-text', { opacity: 0, duration: 0.2 });
+            } else {
+                gsap.to(sidebar, { width: 256, duration: 0.3 });
+                gsap.to(mainContent, { marginLeft: 256, duration: 0.3 });
+                gsap.to('.sidebar-text', { opacity: 1, duration: 0.3, delay: 0.1 });
+            }
+        }
+
+        // Modal functionality
+        function openModal() {
+            modalBackdrop.classList.remove('hidden');
+            gsap.set(addGiftModal.querySelector('.bg-white'), { scale: 0 });
+            gsap.to(modalBackdrop, { opacity: 1, duration: 0.3 });
+            gsap.to(addGiftModal.querySelector('.bg-white'), { 
+                scale: 1, 
+                duration: 0.4, 
+                ease: "back.out(1.7)",
+                delay: 0.1 
+            });
+        }
+
+        function closeModalHandler() {
+            gsap.to(addGiftModal.querySelector('.bg-white'), { 
+                scale: 0, 
+                duration: 0.3, 
+                ease: "back.in(1.7)" 
+            });
+            gsap.to(modalBackdrop, { 
+                opacity: 0, 
+                duration: 0.3, 
+                delay: 0.1,
+                onComplete: () => {
+                    modalBackdrop.classList.add('hidden');
+                    addGiftForm.reset();
+                }
+            });
+        }
+
+        // Gift management
+        function handleAddGift(e) {
+            e.preventDefault();
+            
+            const newGift = {
+                id: nextId++,
+                recipient: document.getElementById('recipient-name').value,
+                gift: document.getElementById('gift-name').value,
+                price: parseFloat(document.getElementById('gift-price').value),
+                status: document.getElementById('gift-status').value
+            };
+
+            gifts.push(newGift);
+            
+            // Update recipients
+            initializeRecipients();
+            
+            renderGifts();
+            updateKPIs();
+            renderRecentGifts();
+            closeModalHandler();
+            
+            showNotification(`Gift for ${newGift.recipient} added successfully!`, 'success');
+            
+            // Animate new row if on gifts page
+            if (currentPage === 'gifts') {
+                setTimeout(() => {
+                    const newRow = document.querySelector(`[data-gift-id="${newGift.id}"]`);
+                    if (newRow) {
+                        gsap.fromTo(newRow, 
+                            { opacity: 0, y: 20, backgroundColor: '#f3f4f6' }, 
+                            { 
+                                opacity: 1, 
+                                y: 0, 
+                                backgroundColor: 'transparent',
+                                duration: 0.8, 
+                                ease: "power2.out" 
+                            }
+                        );
+                    }
+                }, 100);
+            }
+        }
+
+        function deleteGift(id) {
+            const row = document.querySelector(`[data-gift-id="${id}"]`);
+            const gift = gifts.find(g => g.id === id);
+            
+            if (row) {
+                gsap.to(row, {
+                    x: -100,
+                    opacity: 0,
+                    duration: 0.3,
+                    onComplete: () => {
+                        gifts = gifts.filter(gift => gift.id !== id);
+                        initializeRecipients();
+                        renderGifts();
+                        updateKPIs();
+                        renderRecentGifts();
+                        showNotification(`Gift "${gift.gift}" deleted successfully!`, 'success');
+                    }
+                });
+            }
+        }
+
+        function toggleGiftStatus(id) {
+            const gift = gifts.find(g => g.id === id);
+            if (gift) {
+                const statuses = ['planned', 'purchased', 'sent'];
+                const currentIndex = statuses.indexOf(gift.status);
+                gift.status = statuses[(currentIndex + 1) % statuses.length];
+                renderGifts();
+                updateKPIs();
+                renderRecentGifts();
+                showNotification(`Gift status updated to "${gift.status}"!`, 'info');
+            }
+        }
+
+        // Rendering functions
+        function renderGifts() {
+            if (!giftsTableBody) return;
+            
+            const filteredGifts = statusFilter.value ? 
+                gifts.filter(gift => gift.status === statusFilter.value) : gifts;
+
+            giftsTableBody.innerHTML = filteredGifts.map(gift => `
+                <tr data-gift-id="${gift.id}" class="transition-colors" style="border-color: var(--border-gray);" onmouseover="this.style.backgroundColor='var(--light-gray)'" onmouseout="this.style.backgroundColor='var(--pure-white)'">
+                    <td class="px-6 py-4 whitespace-nowrap">
+                        <div class="text-sm font-medium" style="color: var(--primary-black);">${gift.recipient}</div>
+                    </td>
+                    <td class="px-6 py-4 whitespace-nowrap">
+                        <div class="text-sm" style="color: var(--primary-black);">${gift.gift}</div>
+                    </td>
+                    <td class="px-6 py-4 whitespace-nowrap">
+                        <div class="text-sm" style="color: var(--primary-black);">$${gift.price.toFixed(2)}</div>
+                    </td>
+                    <td class="px-6 py-4 whitespace-nowrap">
+                        <span class="inline-flex px-2 py-1 text-xs font-semibold rounded-full ${getStatusBadgeClass(gift.status)}">
+                            ${gift.status.charAt(0).toUpperCase() + gift.status.slice(1)}
+                        </span>
+                    </td>
+                    <td class="px-6 py-4 whitespace-nowrap text-sm font-medium space-x-2">
+                        <button onclick="toggleGiftStatus(${gift.id})" class="transition-colors" style="color: var(--primary-black);" onmouseover="this.style.color='var(--dark-gray)'" onmouseout="this.style.color='var(--primary-black)'">
+                            <i class="fas fa-sync-alt"></i>
+                        </button>
+                        <button onclick="deleteGift(${gift.id})" class="transition-colors" style="color: var(--dark-gray);" onmouseover="this.style.color='var(--primary-black)'" onmouseout="this.style.color='var(--dark-gray)'">
+                            <i class="fas fa-trash"></i>
+                        </button>
+                    </td>
+                </tr>
+            `).join('');
+        }
+
+        function renderRecentGifts() {
+            const recentGiftsPreview = document.getElementById('recent-gifts-preview');
+            if (!recentGiftsPreview) return;
+            
+            const recentGifts = gifts.slice(-3);
+            
+            recentGiftsPreview.innerHTML = recentGifts.map(gift => `
+                <div class="flex items-center justify-between p-3 border-b last:border-b-0" style="border-color: var(--border-gray);">
+                    <div class="flex items-center space-x-3">
+                        <div class="w-10 h-10 rounded-full flex items-center justify-center ${getStatusBadgeClass(gift.status)}">
+                            <i class="fas fa-gift text-sm"></i>
+                        </div>
+                        <div>
+                            <p class="font-medium" style="color: var(--primary-black);">${gift.gift}</p>
+                            <p class="text-sm" style="color: var(--dark-gray);">for ${gift.recipient}</p>
+                        </div>
+                    </div>
+                    <div class="text-right">
+                        <p class="font-medium" style="color: var(--primary-black);">$${gift.price.toFixed(2)}</p>
+                        <span class="text-xs px-2 py-1 rounded-full ${getStatusBadgeClass(gift.status)}">
+                            ${gift.status}
+                        </span>
+                    </div>
+                </div>
+            `).join('');
+        }
+
+        function renderRecipients() {
+            const recipientsList = document.getElementById('recipients-list');
+            if (!recipientsList) return;
+            
+            recipientsList.innerHTML = `
+                <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
+                    ${recipients.map(recipient => `
+                        <div class="recipient-card p-6 rounded-lg transition-shadow" style="background-color: var(--light-gray); border: 1px solid var(--border-gray);">
+                            <div class="flex items-center space-x-4 mb-4">
+                                <div class="w-12 h-12 rounded-full flex items-center justify-center" style="background-color: var(--pure-white); border: 1px solid var(--border-gray);">
+                                    <i class="fas fa-user text-lg" style="color: var(--primary-black);"></i>
+                                </div>
+                                <div>
+                                    <h3 class="font-semibold" style="color: var(--primary-black);">${recipient.name}</h3>
+                                    <p class="text-sm" style="color: var(--dark-gray);">${recipient.email}</p>
+                                </div>
+                            </div>
+                            <div class="grid grid-cols-2 gap-4 text-center">
+                                <div>
+                                    <p class="text-2xl font-bold" style="color: var(--primary-black);">${recipient.totalGifts}</p>
+                                    <p class="text-sm" style="color: var(--dark-gray);">Total Gifts</p>
+                                </div>
+                                <div>
+                                    <p class="text-2xl font-bold" style="color: var(--primary-black);">${recipient.totalSpent.toFixed(0)}</p>
+                                    <p class="text-sm" style="color: var(--dark-gray);">Total Spent</p>
+                                </div>
+                            </div>
+                        </div>
+                    `).join('')}
+                </div>
+            `;
+        }
+
+        function updateRecipientStats() {
+            const totalRecipientsEl = document.getElementById('total-recipients');
+            const activeRecipientsEl = document.getElementById('active-recipients');
+            const avgGiftsEl = document.getElementById('avg-gifts');
+            
+            if (totalRecipientsEl) totalRecipientsEl.textContent = recipients.length;
+            if (activeRecipientsEl) activeRecipientsEl.textContent = Math.floor(recipients.length * 0.7);
+            if (avgGiftsEl) {
+                const avgGifts = recipients.length > 0 ? 
+                    (gifts.length / recipients.length).toFixed(1) : '0.0';
+                avgGiftsEl.textContent = avgGifts;
+            }
+        }
+
+        function getStatusBadgeClass(status) {
+            const classes = {
+                planned: 'status-planned',
+                purchased: 'status-purchased', 
+                sent: 'status-sent'
+            };
+            return `status-badge ${classes[status] || 'status-planned'}`;
+        }
+
+        function filterGifts() {
+            renderGifts();
+        }
+
+        function updateKPIs() {
+            const totalGifts = gifts.length;
+            const pendingGifts = gifts.filter(g => g.status !== 'sent').length;
+            const sentGifts = gifts.filter(g => g.status === 'sent').length;
+            const budgetUsed = gifts.reduce((sum, gift) => sum + gift.price, 0);
+
+            // Animate counter updates
+            animateCounter('total-gifts', totalGifts);
+            animateCounter('pending-gifts', pendingGifts);
+            animateCounter('sent-gifts', sentGifts);
+            animateCounter('budget-used', budgetUsed, true);
+        }
+
+        function animateCounter(id, value, isCurrency = false) {
+            const element = document.getElementById(id);
+            if (!element) return;
+            
+            const startValue = parseInt(element.textContent.replace(/[^0-9]/g, '')) || 0;
+            
+            gsap.to({ val: startValue }, {
+                val: value,
+                duration: 0.8,
+                ease: "power2.out",
+                onUpdate: function() {
+                    const currentVal = Math.round(this.targets()[0].val);
+                    element.textContent = isCurrency ? `${currentVal.toLocaleString()}` : currentVal;
+                }
+            });
+        }
+
+        function animateKPICards() {
+            gsap.fromTo('.kpi-card', 
+                { y: 50, opacity: 0 },
+                { 
+                    y: 0, 
+                    opacity: 1, 
+                    duration: 0.6, 
+                    stagger: 0.1, 
+                    ease: "power2.out",
+                    delay: 0.3 
+                }
+            );
+
+            // Add hover animations to KPI cards
+            document.querySelectorAll('.kpi-card').forEach(card => {
+                card.addEventListener('mouseenter', () => {
+                    gsap.to(card, { scale: 1.05, duration: 0.3, ease: "power2.out" });
+                });
+                
+                card.addEventListener('mouseleave', () => {
+                    gsap.to(card, { scale: 1, duration: 0.3, ease: "power2.out" });
+                });
+            });
+        }
+
+        // Notification system
+        function showNotification(message, type = 'success') {
+            const notification = document.createElement('div');
+            notification.className = `fixed top-4 right-4 px-6 py-3 rounded-lg shadow-lg z-50 text-white font-medium ${
+                type === 'success' ? 'bg-green-500' : 
+                type === 'error' ? 'bg-red-500' : 
+                type === 'info' ? 'bg-blue-500' : 'bg-gray-500'
+            }`;
+            notification.innerHTML = `
+                <div class="flex items-center space-x-2">
+                    <i class="fas fa-${type === 'success' ? 'check' : type === 'error' ? 'times' : 'info'}-circle"></i>
+                    <span>${message}</span>
+                </div>
+            `;
+            
+            document.body.appendChild(notification);
+            
+            gsap.fromTo(notification, 
+                { opacity: 0, x: 100 },
+                { 
+                    opacity: 1, 
+                    x: 0, 
+                    duration: 0.3, 
+                    ease: "power2.out",
+                    onComplete: () => {
+                        setTimeout(() => {
+                            gsap.to(notification, {
+                                opacity: 0,
+                                x: 100,
+                                duration: 0.3,
+                                onComplete: () => notification.remove()
+                            });
+                        }, 3000);
+                    }
+                }
+            );
+        }
+
+        // Responsive adjustments
+        function handleResize() {
+            if (window.innerWidth >= 768) {
+                mobileOverlay.classList.add('hidden');
+                if (!sidebarCollapsed) {
+                    sidebar.classList.remove('sidebar-collapsed');
+                    gsap.set(sidebar, { x: 0 });
+                }
+            } else {
+                if (!mobileOverlay.classList.contains('hidden')) {
+                    closeMobileSidebar();
+                }
+            }
+        }
+
+        window.addEventListener('resize', handleResize);
+
+        // Analytics functions
+        function updateAnalytics() {
+            const totalValue = gifts.reduce((sum, gift) => sum + gift.price, 0);
+            const avgValue = gifts.length > 0 ? (totalValue / gifts.length).toFixed(0) : 0;
+            
+            const trendEl = document.getElementById('gift-trend');
+            const avgValueEl = document.getElementById('avg-gift-value');
+            const successRateEl = document.getElementById('success-rate');
+            const topCategoryEl = document.getElementById('top-category');
+            
+            if (trendEl) trendEl.textContent = '+15%';
+            if (avgValueEl) avgValueEl.textContent = `$${avgValue}`;
+            if (successRateEl) successRateEl.textContent = '85%';
+            if (topCategoryEl) topCategoryEl.textContent = 'Electronics';
+        }
+
+        // Wishlist functions
+        function renderWishlist() {
+            console.log('Wishlist rendered');
+        }
+
+        // Budget functions  
+        function updateBudgetData() {
+            const totalBudget = 2000;
+            const totalSpent = gifts.reduce((sum, gift) => sum + gift.price, 0);
+            const remaining = totalBudget - totalSpent;
+            const progress = ((totalSpent / totalBudget) * 100).toFixed(1);
+            
+            const budgetEl = document.getElementById('total-budget');
+            const spentEl = document.getElementById('total-spent');
+            const remainingEl = document.getElementById('budget-remaining');
+            const progressEl = document.getElementById('budget-progress');
+            
+            if (budgetEl) budgetEl.textContent = `$${totalBudget.toLocaleString()}`;
+            if (spentEl) spentEl.textContent = `$${totalSpent.toLocaleString()}`;
+            if (remainingEl) remainingEl.textContent = `$${remaining.toLocaleString()}`;
+            if (progressEl) progressEl.textContent = `${progress}%`;
+        }
+
+        // Initialize page loading animation
+        gsap.timeline()
+            .fromTo('header', 
+                { opacity: 0, y: -20 },
+                { opacity: 1, y: 0, duration: 0.5, ease: "power2.out" }
+            )
+            .fromTo('.kpi-card', 
+                { opacity: 0, y: 30 },
+                { opacity: 1, y: 0, duration: 0.5, stagger: 0.1, ease: "power2.out" },
+                "-=0.3"
+            )
+            .fromTo('.bg-white:not(.kpi-card)', 
+                { opacity: 0, y: 20 },
+                { opacity: 1, y: 0, duration: 0.5, stagger: 0.1, ease: "power2.out" },
+                "-=0.2"
+            );
+    </script>
+</body>
+</html>
+                                
