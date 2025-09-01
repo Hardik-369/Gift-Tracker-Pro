@@ -409,7 +409,7 @@
                     <div class="p-6 border-b" style="border-color: var(--border-gray);">
                         <div class="flex items-center justify-between">
                             <h3 class="text-lg font-semibold" style="color: var(--primary-black);">Recipients List</h3>
-                            <button id="add-recipient-btn" class="px-4 py-2 btn-primary rounded-lg transition-colors">
+                            <button id="add-recipient-btn" class="px-4 py-2 btn-primary rounded-lg transition-colors" onclick="addRecipient()">
                                 <i class="fas fa-plus mr-2"></i>Add Recipient
                             </button>
                         </div>
@@ -558,7 +558,7 @@
                     <div class="p-6 border-b" style="border-color: var(--border-gray);">
                         <div class="flex items-center justify-between">
                             <h3 class="text-lg font-semibold" style="color: var(--primary-black);">My Wishlist</h3>
-                            <button id="add-wish-btn" class="px-4 py-2 btn-primary rounded-lg transition-colors">
+                            <button id="add-wish-btn" class="px-4 py-2 btn-primary rounded-lg transition-colors" onclick="addWish()">
                                 <i class="fas fa-plus mr-2"></i>Add Wish
                             </button>
                         </div>
@@ -604,28 +604,28 @@
                             <h3 class="text-lg font-semibold" style="color: var(--primary-black);">Total Budget</h3>
                             <i class="fas fa-wallet text-2xl" style="color: var(--primary-black);"></i>
                         </div>
-                        <p class="text-3xl font-bold" style="color: var(--primary-black);">$2,000</p>
+                        <p class="text-3xl font-bold" style="color: var(--primary-black);" id="total-budget">$2,000</p>
                     </div>
                     <div class="bg-white p-6 rounded-xl professional-shadow" style="background-color: var(--pure-white); border: 1px solid var(--border-gray);">
                         <div class="flex items-center justify-between mb-4">
                             <h3 class="text-lg font-semibold" style="color: var(--primary-black);">Spent</h3>
                             <i class="fas fa-credit-card text-2xl" style="color: var(--primary-black);"></i>
                         </div>
-                        <p class="text-3xl font-bold" style="color: var(--primary-black);">$1,250</p>
+                        <p class="text-3xl font-bold" style="color: var(--primary-black);" id="total-spent">$1,250</p>
                     </div>
                     <div class="bg-white p-6 rounded-xl professional-shadow" style="background-color: var(--pure-white); border: 1px solid var(--border-gray);">
                         <div class="flex items-center justify-between mb-4">
                             <h3 class="text-lg font-semibold" style="color: var(--primary-black);">Remaining</h3>
                             <i class="fas fa-piggy-bank text-2xl" style="color: var(--primary-black);"></i>
                         </div>
-                        <p class="text-3xl font-bold" style="color: var(--primary-black);">$750</p>
+                        <p class="text-3xl font-bold" style="color: var(--primary-black);" id="budget-remaining">$750</p>
                     </div>
                     <div class="bg-white p-6 rounded-xl professional-shadow" style="background-color: var(--pure-white); border: 1px solid var(--border-gray);">
                         <div class="flex items-center justify-between mb-4">
                             <h3 class="text-lg font-semibold" style="color: var(--primary-black);">Progress</h3>
                             <i class="fas fa-chart-pie text-2xl" style="color: var(--primary-black);"></i>
                         </div>
-                        <p class="text-3xl font-bold" style="color: var(--primary-black);">62.5%</p>
+                        <p class="text-3xl font-bold" style="color: var(--primary-black);" id="budget-progress">62.5%</p>
                     </div>
                 </div>
 
@@ -641,7 +641,7 @@
                                 <label class="block text-sm font-medium mb-2" style="color: var(--dark-gray);">Alert Threshold %</label>
                                 <input type="number" value="80" class="w-full px-3 py-2 border rounded-lg" style="border-color: var(--border-gray);">
                             </div>
-                            <button class="w-full px-4 py-2 btn-primary rounded-lg">Update Settings</button>
+                            <button class="w-full px-4 py-2 btn-primary rounded-lg" onclick="updateBudgetSettings()">Update Settings</button>
                         </div>
                     </div>
                     
@@ -699,7 +699,7 @@
                     <div class="p-6 border-b" style="border-color: var(--border-gray);">
                         <div class="flex items-center justify-between">
                             <h3 class="text-lg font-semibold" style="color: var(--primary-black);">Event Calendar</h3>
-                            <button id="add-event-btn" class="px-4 py-2 btn-primary rounded-lg transition-colors">
+                            <button id="add-event-btn" class="px-4 py-2 btn-primary rounded-lg transition-colors" onclick="addEvent()">
                                 <i class="fas fa-plus mr-2"></i>Add Event
                             </button>
                         </div>
@@ -765,7 +765,7 @@
                                     </select>
                                 </div>
                             </div>
-                            <button class="mt-6 px-6 py-2 btn-primary rounded-lg transition-colors">
+                            <button class="mt-6 px-6 py-2 btn-primary rounded-lg transition-colors" onclick="saveSettings()">
                                 Save Changes
                             </button>
                         </div>
@@ -783,7 +783,7 @@
                                     <p class="text-sm" style="color: var(--dark-gray);">Receive email updates about your gifts</p>
                                 </div>
                                 <label class="relative inline-flex items-center cursor-pointer">
-                                    <input type="checkbox" class="sr-only peer" checked>
+                                    <input type="checkbox" class="sr-only peer" id="email-notifications" onchange="updateNotificationSetting('emailNotifications', this.checked)">
                                     <div class="w-11 h-6 bg-gray-200 peer-focus:outline-none rounded-full peer peer-checked:after:translate-x-full peer-checked:after:border-white after:content-[''] after:absolute after:top-[2px] after:left-[2px] after:bg-white after:rounded-full after:h-5 after:w-5 after:transition-all peer-checked:bg-black"></div>
                                 </label>
                             </div>
@@ -793,7 +793,7 @@
                                     <p class="text-sm" style="color: var(--dark-gray);">Get notified about upcoming events</p>
                                 </div>
                                 <label class="relative inline-flex items-center cursor-pointer">
-                                    <input type="checkbox" class="sr-only peer">
+                                    <input type="checkbox" class="sr-only peer" id="push-notifications" onchange="updateNotificationSetting('pushNotifications', this.checked)">
                                     <div class="w-11 h-6 bg-gray-200 peer-focus:outline-none rounded-full peer peer-checked:after:translate-x-full peer-checked:after:border-white after:content-[''] after:absolute after:top-[2px] after:left-[2px] after:bg-white after:rounded-full after:h-5 after:w-5 after:transition-all peer-checked:bg-black"></div>
                                 </label>
                             </div>
@@ -803,7 +803,7 @@
                                     <p class="text-sm" style="color: var(--dark-gray);">Get a weekly report of your gift activities</p>
                                 </div>
                                 <label class="relative inline-flex items-center cursor-pointer">
-                                    <input type="checkbox" class="sr-only peer" checked>
+                                    <input type="checkbox" class="sr-only peer" id="weekly-summary" onchange="updateNotificationSetting('weeklySubmary', this.checked)">
                                     <div class="w-11 h-6 bg-gray-200 peer-focus:outline-none rounded-full peer peer-checked:after:translate-x-full peer-checked:after:border-white after:content-[''] after:absolute after:top-[2px] after:left-[2px] after:bg-white after:rounded-full after:h-5 after:w-5 after:transition-all peer-checked:bg-black"></div>
                                 </label>
                             </div>
@@ -817,22 +817,22 @@
                         </div>
                         <div class="p-6">
                             <div class="grid grid-cols-1 md:grid-cols-2 gap-4">
-                                <button class="p-4 border rounded-lg transition-colors text-left btn-secondary" style="border-color: var(--border-gray);">
+                                <button onclick="exportData()" class="p-4 border rounded-lg transition-colors text-left btn-secondary" style="border-color: var(--border-gray);">
                                     <i class="fas fa-download text-xl mb-2" style="color: var(--primary-black);"></i>
                                     <h4 class="font-medium" style="color: var(--primary-black);">Export Data</h4>
-                                    <p class="text-sm" style="color: var(--dark-gray);">Download your gift data as CSV</p>
+                                    <p class="text-sm" style="color: var(--dark-gray);">Download your gift data as JSON</p>
                                 </button>
-                                <button class="p-4 border rounded-lg transition-colors text-left btn-secondary" style="border-color: var(--border-gray);">
+                                <button onclick="importData()" class="p-4 border rounded-lg transition-colors text-left btn-secondary" style="border-color: var(--border-gray);">
                                     <i class="fas fa-upload text-xl mb-2" style="color: var(--primary-black);"></i>
                                     <h4 class="font-medium" style="color: var(--primary-black);">Import Data</h4>
-                                    <p class="text-sm" style="color: var(--dark-gray);">Import gifts from CSV file</p>
+                                    <p class="text-sm" style="color: var(--dark-gray);">Import gifts from JSON file</p>
                                 </button>
-                                <button class="p-4 border rounded-lg transition-colors text-left" style="border-color: var(--dark-gray); background-color: var(--light-gray);">
+                                <button onclick="clearAllData()" class="p-4 border rounded-lg transition-colors text-left" style="border-color: var(--dark-gray); background-color: var(--light-gray);">
                                     <i class="fas fa-trash text-xl mb-2" style="color: var(--dark-gray);"></i>
                                     <h4 class="font-medium" style="color: var(--dark-gray);">Clear All Data</h4>
                                     <p class="text-sm" style="color: var(--dark-gray);">Remove all gifts and recipients</p>
                                 </button>
-                                <button class="p-4 border rounded-lg transition-colors text-left" style="border-color: var(--dark-gray); background-color: var(--light-gray);">
+                                <button onclick="resetSettings()" class="p-4 border rounded-lg transition-colors text-left" style="border-color: var(--dark-gray); background-color: var(--light-gray);">
                                     <i class="fas fa-sync text-xl mb-2" style="color: var(--dark-gray);"></i>
                                     <h4 class="font-medium" style="color: var(--dark-gray);">Reset Settings</h4>
                                     <p class="text-sm" style="color: var(--dark-gray);">Restore default settings</p>
@@ -871,6 +871,19 @@
                         </div>
                         
                         <div>
+                            <label class="block text-sm font-medium mb-2" style="color: var(--dark-gray);">Category</label>
+                            <select id="gift-category" class="w-full px-3 py-2 border rounded-lg" style="border-color: var(--border-gray); background-color: var(--pure-white); color: var(--primary-black);">
+                                <option value="Electronics">Electronics</option>
+                                <option value="Books & Media">Books & Media</option>
+                                <option value="Home & Garden">Home & Garden</option>
+                                <option value="Fashion">Fashion</option>
+                                <option value="Fitness">Fitness</option>
+                                <option value="Arts & Crafts">Arts & Crafts</option>
+                                <option value="Other">Other</option>
+                            </select>
+                        </div>
+                        
+                        <div>
                             <label class="block text-sm font-medium mb-2" style="color: var(--dark-gray);">Price</label>
                             <input type="number" id="gift-price" step="0.01" class="w-full px-3 py-2 border rounded-lg" style="border-color: var(--border-gray); background-color: var(--pure-white); color: var(--primary-black);" required>
                         </div>
@@ -898,6 +911,188 @@
         </div>
     </div>
 
+    <!-- Add Recipient Modal -->
+    <div id="recipient-modal-backdrop" class="fixed inset-0 bg-black bg-opacity-50 modal-backdrop hidden z-50">
+        <div id="add-recipient-modal" class="fixed inset-0 flex items-center justify-center p-4">
+            <div class="bg-white rounded-xl professional-shadow-lg w-full max-w-md transform scale-0 transition-transform" style="background-color: var(--pure-white); border: 1px solid var(--border-gray);">
+                <div class="p-6 border-b" style="border-color: var(--border-gray);">
+                    <div class="flex items-center justify-between">
+                        <h3 class="text-lg font-semibold" style="color: var(--primary-black);">Add New Recipient</h3>
+                        <button id="close-recipient-modal" style="color: var(--dark-gray);">
+                            <i class="fas fa-times text-xl"></i>
+                        </button>
+                    </div>
+                </div>
+                
+                <div class="p-6">
+                    <form id="add-recipient-form" class="space-y-4">
+                        <div>
+                            <label class="block text-sm font-medium mb-2" style="color: var(--dark-gray);">Full Name</label>
+                            <input type="text" id="recipient-full-name" class="w-full px-3 py-2 border rounded-lg" style="border-color: var(--border-gray); background-color: var(--pure-white); color: var(--primary-black);" required>
+                        </div>
+                        
+                        <div>
+                            <label class="block text-sm font-medium mb-2" style="color: var(--dark-gray);">Email Address</label>
+                            <input type="email" id="recipient-email" class="w-full px-3 py-2 border rounded-lg" style="border-color: var(--border-gray); background-color: var(--pure-white); color: var(--primary-black);" required>
+                        </div>
+                        
+                        <div>
+                            <label class="block text-sm font-medium mb-2" style="color: var(--dark-gray);">Relationship</label>
+                            <select id="recipient-relationship" class="w-full px-3 py-2 border rounded-lg" style="border-color: var(--border-gray); background-color: var(--pure-white); color: var(--primary-black);">
+                                <option value="Family">Family</option>
+                                <option value="Friend">Friend</option>
+                                <option value="Colleague">Colleague</option>
+                                <option value="Partner">Partner</option>
+                                <option value="Other">Other</option>
+                            </select>
+                        </div>
+                        
+                        <div>
+                            <label class="block text-sm font-medium mb-2" style="color: var(--dark-gray);">Birthday (Optional)</label>
+                            <input type="date" id="recipient-birthday" class="w-full px-3 py-2 border rounded-lg" style="border-color: var(--border-gray); background-color: var(--pure-white); color: var(--primary-black);">
+                        </div>
+                        
+                        <div class="flex space-x-3 pt-4">
+                            <button type="submit" class="flex-1 btn-primary py-2 rounded-lg transition-colors">
+                                Add Recipient
+                            </button>
+                            <button type="button" id="cancel-recipient-modal" class="flex-1 btn-secondary py-2 rounded-lg transition-colors">
+                                Cancel
+                            </button>
+                        </div>
+                    </form>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Add Event Modal -->
+    <div id="event-modal-backdrop" class="fixed inset-0 bg-black bg-opacity-50 modal-backdrop hidden z-50">
+        <div id="add-event-modal" class="fixed inset-0 flex items-center justify-center p-4">
+            <div class="bg-white rounded-xl professional-shadow-lg w-full max-w-md transform scale-0 transition-transform" style="background-color: var(--pure-white); border: 1px solid var(--border-gray);">
+                <div class="p-6 border-b" style="border-color: var(--border-gray);">
+                    <div class="flex items-center justify-between">
+                        <h3 class="text-lg font-semibold" style="color: var(--primary-black);">Add New Event</h3>
+                        <button id="close-event-modal" style="color: var(--dark-gray);">
+                            <i class="fas fa-times text-xl"></i>
+                        </button>
+                    </div>
+                </div>
+                
+                <div class="p-6">
+                    <form id="add-event-form" class="space-y-4">
+                        <div>
+                            <label class="block text-sm font-medium mb-2" style="color: var(--dark-gray);">Event Name</label>
+                            <input type="text" id="event-title" class="w-full px-3 py-2 border rounded-lg" style="border-color: var(--border-gray); background-color: var(--pure-white); color: var(--primary-black);" required>
+                        </div>
+                        
+                        <div>
+                            <label class="block text-sm font-medium mb-2" style="color: var(--dark-gray);">Event Date</label>
+                            <input type="date" id="event-date" class="w-full px-3 py-2 border rounded-lg" style="border-color: var(--border-gray); background-color: var(--pure-white); color: var(--primary-black);" required>
+                        </div>
+                        
+                        <div>
+                            <label class="block text-sm font-medium mb-2" style="color: var(--dark-gray);">Event Type</label>
+                            <select id="event-type" class="w-full px-3 py-2 border rounded-lg" style="border-color: var(--border-gray); background-color: var(--pure-white); color: var(--primary-black);">
+                                <option value="Birthday">Birthday</option>
+                                <option value="Anniversary">Anniversary</option>
+                                <option value="Holiday">Holiday</option>
+                                <option value="Graduation">Graduation</option>
+                                <option value="Wedding">Wedding</option>
+                                <option value="Other">Other</option>
+                            </select>
+                        </div>
+                        
+                        <div>
+                            <label class="block text-sm font-medium mb-2" style="color: var(--dark-gray);">Description (Optional)</label>
+                            <textarea id="event-description" rows="3" class="w-full px-3 py-2 border rounded-lg" style="border-color: var(--border-gray); background-color: var(--pure-white); color: var(--primary-black);" placeholder="Add event details..."></textarea>
+                        </div>
+                        
+                        <div class="flex space-x-3 pt-4">
+                            <button type="submit" class="flex-1 btn-primary py-2 rounded-lg transition-colors">
+                                Add Event
+                            </button>
+                            <button type="button" id="cancel-event-modal" class="flex-1 btn-secondary py-2 rounded-lg transition-colors">
+                                Cancel
+                            </button>
+                        </div>
+                    </form>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Add Wish Modal -->
+    <div id="wish-modal-backdrop" class="fixed inset-0 bg-black bg-opacity-50 modal-backdrop hidden z-50">
+        <div id="add-wish-modal" class="fixed inset-0 flex items-center justify-center p-4">
+            <div class="bg-white rounded-xl professional-shadow-lg w-full max-w-md transform scale-0 transition-transform" style="background-color: var(--pure-white); border: 1px solid var(--border-gray);">
+                <div class="p-6 border-b" style="border-color: var(--border-gray);">
+                    <div class="flex items-center justify-between">
+                        <h3 class="text-lg font-semibold" style="color: var(--primary-black);">Add New Wish</h3>
+                        <button id="close-wish-modal" style="color: var(--dark-gray);">
+                            <i class="fas fa-times text-xl"></i>
+                        </button>
+                    </div>
+                </div>
+                
+                <div class="p-6">
+                    <form id="add-wish-form" class="space-y-4">
+                        <div>
+                            <label class="block text-sm font-medium mb-2" style="color: var(--dark-gray);">Wish Title</label>
+                            <input type="text" id="wish-title" class="w-full px-3 py-2 border rounded-lg" style="border-color: var(--border-gray); background-color: var(--pure-white); color: var(--primary-black);" required>
+                        </div>
+                        
+                        <div>
+                            <label class="block text-sm font-medium mb-2" style="color: var(--dark-gray);">For Whom</label>
+                            <input type="text" id="wish-recipient" class="w-full px-3 py-2 border rounded-lg" style="border-color: var(--border-gray); background-color: var(--pure-white); color: var(--primary-black);" required>
+                        </div>
+                        
+                        <div>
+                            <label class="block text-sm font-medium mb-2" style="color: var(--dark-gray);">Estimated Price</label>
+                            <input type="number" id="wish-price" step="0.01" class="w-full px-3 py-2 border rounded-lg" style="border-color: var(--border-gray); background-color: var(--pure-white); color: var(--primary-black);" required>
+                        </div>
+                        
+                        <div>
+                            <label class="block text-sm font-medium mb-2" style="color: var(--dark-gray);">Priority</label>
+                            <select id="wish-priority" class="w-full px-3 py-2 border rounded-lg" style="border-color: var(--border-gray); background-color: var(--pure-white); color: var(--primary-black);">
+                                <option value="high">High</option>
+                                <option value="medium" selected>Medium</option>
+                                <option value="low">Low</option>
+                            </select>
+                        </div>
+                        
+                        <div>
+                            <label class="block text-sm font-medium mb-2" style="color: var(--dark-gray);">Category</label>
+                            <select id="wish-category" class="w-full px-3 py-2 border rounded-lg" style="border-color: var(--border-gray); background-color: var(--pure-white); color: var(--primary-black);">
+                                <option value="Electronics">Electronics</option>
+                                <option value="Books & Media">Books & Media</option>
+                                <option value="Home & Garden">Home & Garden</option>
+                                <option value="Fashion">Fashion</option>
+                                <option value="Fitness">Fitness</option>
+                                <option value="Arts & Crafts">Arts & Crafts</option>
+                                <option value="Other">Other</option>
+                            </select>
+                        </div>
+                        
+                        <div>
+                            <label class="block text-sm font-medium mb-2" style="color: var(--dark-gray);">Notes</label>
+                            <textarea id="wish-notes" rows="3" class="w-full px-3 py-2 border rounded-lg" style="border-color: var(--border-gray); background-color: var(--pure-white); color: var(--primary-black);" placeholder="Add details about this wish..."></textarea>
+                        </div>
+                        
+                        <div class="flex space-x-3 pt-4">
+                            <button type="submit" class="flex-1 btn-primary py-2 rounded-lg transition-colors">
+                                Add Wish
+                            </button>
+                            <button type="button" id="cancel-wish-modal" class="flex-1 btn-secondary py-2 rounded-lg transition-colors">
+                                Cancel
+                            </button>
+                        </div>
+                    </form>
+                </div>
+            </div>
+        </div>
+    </div>
+
     <!-- Mobile Overlay -->
     <div id="mobile-overlay" class="fixed inset-0 bg-black bg-opacity-50 hidden md:hidden z-30"></div>
 
@@ -905,19 +1100,97 @@
         // Initialize GSAP
         gsap.registerPlugin();
 
-        // State management
-        let gifts = [
-            { id: 1, recipient: 'John Doe', gift: 'Wireless Headphones', price: 150, status: 'sent' },
-            { id: 2, recipient: 'Jane Smith', gift: 'Coffee Maker', price: 89.99, status: 'purchased' },
-            { id: 3, recipient: 'Mike Johnson', gift: 'Book Set', price: 45.50, status: 'planned' },
-            { id: 4, recipient: 'Sarah Wilson', gift: 'Yoga Mat', price: 35, status: 'sent' },
-            { id: 5, recipient: 'Tom Brown', gift: 'Smart Watch', price: 299, status: 'planned' }
+        // State management with localStorage
+        let gifts = JSON.parse(localStorage.getItem('giftTracker_gifts')) || [
+            { id: 1, recipient: 'John Doe', gift: 'Wireless Headphones', price: 150, status: 'sent', category: 'Electronics', date: '2024-01-15' },
+            { id: 2, recipient: 'Jane Smith', gift: 'Coffee Maker', price: 89.99, status: 'purchased', category: 'Home & Garden', date: '2024-01-20' },
+            { id: 3, recipient: 'Mike Johnson', gift: 'Book Set', price: 45.50, status: 'planned', category: 'Books & Media', date: '2024-01-25' },
+            { id: 4, recipient: 'Sarah Wilson', gift: 'Yoga Mat', price: 35, status: 'sent', category: 'Fitness', date: '2024-01-30' },
+            { id: 5, recipient: 'Tom Brown', gift: 'Smart Watch', price: 299, status: 'planned', category: 'Electronics', date: '2024-02-05' }
         ];
 
-        let recipients = [];
+        let recipients = JSON.parse(localStorage.getItem('giftTracker_recipients')) || [];
+        let wishlist = JSON.parse(localStorage.getItem('giftTracker_wishlist')) || [
+            { id: 1, title: 'Smart Home Assistant', recipient: 'Mom', price: 129.99, priority: 'high', category: 'Electronics', notes: 'Voice-controlled smart speaker' },
+            { id: 2, title: 'Professional Art Set', recipient: 'Sister', price: 89.50, priority: 'medium', category: 'Arts & Crafts', notes: 'Complete drawing supplies' },
+            { id: 3, title: 'Fitness Tracker', recipient: 'Friend', price: 199.00, priority: 'low', category: 'Fitness', notes: 'Waterproof fitness tracking device' }
+        ];
+        let events = JSON.parse(localStorage.getItem('giftTracker_events')) || [
+            { id: 1, title: "Sarah's Birthday", date: '2024-12-15', gifts: 2 },
+            { id: 2, title: 'Christmas', date: '2024-12-25', gifts: 8 },
+            { id: 3, title: 'New Year', date: '2025-01-01', gifts: 3 }
+        ];
+        let budgetSettings = JSON.parse(localStorage.getItem('giftTracker_budget')) || {
+            annualBudget: 2000,
+            alertThreshold: 80,
+            emergencyFund: 10
+        };
+        let userSettings = JSON.parse(localStorage.getItem('giftTracker_settings')) || {
+            name: 'John Smith',
+            email: 'john@example.com',
+            currency: 'USD',
+            emailNotifications: true,
+            pushNotifications: false,
+            weeklySubmary: true
+        };
+
         let currentPage = 'dashboard';
-        let nextId = 6;
+        let nextId = Math.max(...gifts.map(g => g.id), 0) + 1;
+        let nextWishId = Math.max(...wishlist.map(w => w.id), 0) + 1;
+        let nextEventId = Math.max(...events.map(e => e.id), 0) + 1;
         let sidebarCollapsed = false;
+
+        // Load data from localStorage
+        function loadFromStorage() {
+            // Load gifts
+            const storedGifts = localStorage.getItem('giftTracker_gifts');
+            if (storedGifts) {
+                gifts = JSON.parse(storedGifts);
+                nextId = Math.max(...gifts.map(g => g.id), 0) + 1;
+            }
+            
+            // Load recipients
+            const storedRecipients = localStorage.getItem('giftTracker_recipients');
+            if (storedRecipients) {
+                recipients = JSON.parse(storedRecipients);
+            }
+            
+            // Load wishlist
+            const storedWishlist = localStorage.getItem('giftTracker_wishlist');
+            if (storedWishlist) {
+                wishlist = JSON.parse(storedWishlist);
+                nextWishId = Math.max(...wishlist.map(w => w.id), 0) + 1;
+            }
+            
+            // Load events
+            const storedEvents = localStorage.getItem('giftTracker_events');
+            if (storedEvents) {
+                events = JSON.parse(storedEvents);
+                nextEventId = Math.max(...events.map(e => e.id), 0) + 1;
+            }
+            
+            // Load budget settings
+            const storedBudget = localStorage.getItem('giftTracker_budget');
+            if (storedBudget) {
+                budgetSettings = JSON.parse(storedBudget);
+            }
+            
+            // Load user settings
+            const storedSettings = localStorage.getItem('giftTracker_settings');
+            if (storedSettings) {
+                userSettings = JSON.parse(storedSettings);
+            }
+        }
+
+        // Save data to localStorage
+        function saveToStorage() {
+            localStorage.setItem('giftTracker_gifts', JSON.stringify(gifts));
+            localStorage.setItem('giftTracker_recipients', JSON.stringify(recipients));
+            localStorage.setItem('giftTracker_wishlist', JSON.stringify(wishlist));
+            localStorage.setItem('giftTracker_events', JSON.stringify(events));
+            localStorage.setItem('giftTracker_budget', JSON.stringify(budgetSettings));
+            localStorage.setItem('giftTracker_settings', JSON.stringify(userSettings));
+        }
 
         // DOM elements
         const sidebar = document.getElementById('sidebar');
@@ -935,9 +1208,15 @@
         const giftsTableBody = document.getElementById('gifts-table-body');
         const pageTitle = document.getElementById('page-title');
         const globalSearch = document.getElementById('global-search');
+        
+        // Modal elements
+        const recipientModalBackdrop = document.getElementById('recipient-modal-backdrop');
+        const eventModalBackdrop = document.getElementById('event-modal-backdrop');
+        const wishModalBackdrop = document.getElementById('wish-modal-backdrop');
 
         // Initialize
         document.addEventListener('DOMContentLoaded', function() {
+            loadFromStorage();
             initializeRecipients();
             renderGifts();
             updateKPIs();
@@ -946,6 +1225,10 @@
             animateKPICards();
             renderRecentGifts();
             renderRecipients();
+            renderEvents();
+            renderWishlist();
+            loadSettings();
+            updateBudgetData();
         });
 
         // Initialize recipients from gifts
@@ -1049,10 +1332,11 @@
                     updateBudgetData();
                     break;
                 case 'events':
-                    // Events page is static for now
+                    renderEvents();
+                    updateEventStats();
                     break;
                 case 'settings':
-                    // Settings page is static for now
+                    loadSettings();
                     break;
             }
         }
@@ -1081,6 +1365,35 @@
             
             document.getElementById('notification-btn').addEventListener('click', () => {
                 showNotification('You have 3 new notifications!', 'info');
+            });
+            
+            // Setup modal event listeners
+            setupModalEventListeners();
+        }
+        
+        function setupModalEventListeners() {
+            // Recipient modal
+            document.getElementById('close-recipient-modal').addEventListener('click', () => closeSpecificModal('recipient'));
+            document.getElementById('cancel-recipient-modal').addEventListener('click', () => closeSpecificModal('recipient'));
+            document.getElementById('add-recipient-form').addEventListener('submit', handleAddRecipient);
+            recipientModalBackdrop.addEventListener('click', (e) => {
+                if (e.target === recipientModalBackdrop) closeSpecificModal('recipient');
+            });
+            
+            // Event modal
+            document.getElementById('close-event-modal').addEventListener('click', () => closeSpecificModal('event'));
+            document.getElementById('cancel-event-modal').addEventListener('click', () => closeSpecificModal('event'));
+            document.getElementById('add-event-form').addEventListener('submit', handleAddEvent);
+            eventModalBackdrop.addEventListener('click', (e) => {
+                if (e.target === eventModalBackdrop) closeSpecificModal('event');
+            });
+            
+            // Wish modal
+            document.getElementById('close-wish-modal').addEventListener('click', () => closeSpecificModal('wish'));
+            document.getElementById('cancel-wish-modal').addEventListener('click', () => closeSpecificModal('wish'));
+            document.getElementById('add-wish-form').addEventListener('submit', handleAddWish);
+            wishModalBackdrop.addEventListener('click', (e) => {
+                if (e.target === wishModalBackdrop) closeSpecificModal('wish');
             });
         }
 
@@ -1187,6 +1500,76 @@
                 }
             });
         }
+        
+        function openSpecificModal(type) {
+            let backdrop, modal;
+            
+            switch(type) {
+                case 'recipient':
+                    backdrop = recipientModalBackdrop;
+                    modal = document.getElementById('add-recipient-modal');
+                    break;
+                case 'event':
+                    backdrop = eventModalBackdrop;
+                    modal = document.getElementById('add-event-modal');
+                    break;
+                case 'wish':
+                    backdrop = wishModalBackdrop;
+                    modal = document.getElementById('add-wish-modal');
+                    break;
+                default:
+                    return;
+            }
+            
+            backdrop.classList.remove('hidden');
+            gsap.set(modal.querySelector('.bg-white'), { scale: 0 });
+            gsap.to(backdrop, { opacity: 1, duration: 0.3 });
+            gsap.to(modal.querySelector('.bg-white'), { 
+                scale: 1, 
+                duration: 0.4, 
+                ease: "back.out(1.7)",
+                delay: 0.1 
+            });
+        }
+        
+        function closeSpecificModal(type) {
+            let backdrop, modal, form;
+            
+            switch(type) {
+                case 'recipient':
+                    backdrop = recipientModalBackdrop;
+                    modal = document.getElementById('add-recipient-modal');
+                    form = document.getElementById('add-recipient-form');
+                    break;
+                case 'event':
+                    backdrop = eventModalBackdrop;
+                    modal = document.getElementById('add-event-modal');
+                    form = document.getElementById('add-event-form');
+                    break;
+                case 'wish':
+                    backdrop = wishModalBackdrop;
+                    modal = document.getElementById('add-wish-modal');
+                    form = document.getElementById('add-wish-form');
+                    break;
+                default:
+                    return;
+            }
+            
+            gsap.to(modal.querySelector('.bg-white'), { 
+                scale: 0, 
+                duration: 0.3, 
+                ease: "back.in(1.7)" 
+            });
+            gsap.to(backdrop, { 
+                opacity: 0, 
+                duration: 0.3, 
+                delay: 0.1,
+                onComplete: () => {
+                    backdrop.classList.add('hidden');
+                    if (form) form.reset();
+                }
+            });
+        }
 
         // Gift management
         function handleAddGift(e) {
@@ -1197,13 +1580,18 @@
                 recipient: document.getElementById('recipient-name').value,
                 gift: document.getElementById('gift-name').value,
                 price: parseFloat(document.getElementById('gift-price').value),
-                status: document.getElementById('gift-status').value
+                status: document.getElementById('gift-status').value,
+                category: document.getElementById('gift-category') ? document.getElementById('gift-category').value : 'Other',
+                date: new Date().toISOString().split('T')[0]
             };
 
             gifts.push(newGift);
             
             // Update recipients
             initializeRecipients();
+            
+            // Save to localStorage
+            saveToStorage();
             
             renderGifts();
             updateKPIs();
@@ -1244,6 +1632,7 @@
                     onComplete: () => {
                         gifts = gifts.filter(gift => gift.id !== id);
                         initializeRecipients();
+                        saveToStorage();
                         renderGifts();
                         updateKPIs();
                         renderRecentGifts();
@@ -1259,6 +1648,7 @@
                 const statuses = ['planned', 'purchased', 'sent'];
                 const currentIndex = statuses.indexOf(gift.status);
                 gift.status = statuses[(currentIndex + 1) % statuses.length];
+                saveToStorage();
                 renderGifts();
                 updateKPIs();
                 renderRecentGifts();
@@ -1354,6 +1744,14 @@
                                     <p class="text-2xl font-bold" style="color: var(--primary-black);">${recipient.totalSpent.toFixed(0)}</p>
                                     <p class="text-sm" style="color: var(--dark-gray);">Total Spent</p>
                                 </div>
+                            </div>
+                            <div class="mt-4 flex space-x-2">
+                                <button onclick="editRecipient(${recipient.id})" class="text-sm btn-secondary px-3 py-1 rounded flex-1">
+                                    <i class="fas fa-edit mr-1"></i>Edit
+                                </button>
+                                <button onclick="deleteRecipient(${recipient.id})" class="text-sm px-3 py-1 rounded" style="background-color: var(--light-gray); color: var(--dark-gray); border: 1px solid var(--border-gray);">
+                                    <i class="fas fa-trash mr-1"></i>Delete
+                                </button>
                             </div>
                         </div>
                     `).join('')}
@@ -1498,6 +1896,230 @@
 
         window.addEventListener('resize', handleResize);
 
+        // Recipient management
+        function addRecipient() {
+            openSpecificModal('recipient');
+        }
+        
+        function handleAddRecipient(e) {
+            e.preventDefault();
+            
+            const form = e.target;
+            const editId = form.dataset.editId;
+            
+            if (editId) {
+                // Edit mode
+                const recipient = recipients.find(r => r.id === parseInt(editId));
+                if (recipient) {
+                    recipient.name = document.getElementById('recipient-full-name').value;
+                    recipient.email = document.getElementById('recipient-email').value;
+                    recipient.relationship = document.getElementById('recipient-relationship').value;
+                    recipient.birthday = document.getElementById('recipient-birthday').value;
+                    
+                    saveToStorage();
+                    renderRecipients();
+                    updateRecipientStats();
+                    closeSpecificModal('recipient');
+                    showNotification(`Recipient "${recipient.name}" updated!`, 'success');
+                    
+                    // Reset form to add mode
+                    delete form.dataset.editId;
+                    form.querySelector('button[type="submit"]').textContent = 'Add Recipient';
+                    document.querySelector('#add-recipient-modal h3').textContent = 'Add New Recipient';
+                }
+            } else {
+                // Add mode
+                const newRecipient = {
+                    id: Math.max(...recipients.map(r => r.id), 0) + 1,
+                    name: document.getElementById('recipient-full-name').value,
+                    email: document.getElementById('recipient-email').value,
+                    relationship: document.getElementById('recipient-relationship').value,
+                    birthday: document.getElementById('recipient-birthday').value,
+                    totalGifts: 0,
+                    totalSpent: 0
+                };
+                
+                recipients.push(newRecipient);
+                saveToStorage();
+                renderRecipients();
+                updateRecipientStats();
+                closeSpecificModal('recipient');
+                showNotification(`Recipient "${newRecipient.name}" added!`, 'success');
+            }
+        }
+        
+        function deleteRecipient(recipientId) {
+            const recipient = recipients.find(r => r.id === recipientId);
+            if (recipient && confirm(`Delete recipient "${recipient.name}"?`)) {
+                recipients = recipients.filter(r => r.id !== recipientId);
+                saveToStorage();
+                renderRecipients();
+                updateRecipientStats();
+                showNotification(`Recipient "${recipient.name}" deleted!`, 'success');
+            }
+        }
+        
+        function editRecipient(recipientId) {
+            const recipient = recipients.find(r => r.id === recipientId);
+            if (recipient) {
+                // Pre-fill the form with existing data
+                document.getElementById('recipient-full-name').value = recipient.name;
+                document.getElementById('recipient-email').value = recipient.email;
+                document.getElementById('recipient-relationship').value = recipient.relationship || 'Other';
+                document.getElementById('recipient-birthday').value = recipient.birthday || '';
+                
+                // Change form behavior to edit mode
+                const form = document.getElementById('add-recipient-form');
+                const submitBtn = form.querySelector('button[type="submit"]');
+                submitBtn.textContent = 'Update Recipient';
+                
+                // Store the ID for update
+                form.dataset.editId = recipientId;
+                
+                // Change modal title
+                document.querySelector('#add-recipient-modal h3').textContent = 'Edit Recipient';
+                
+                openSpecificModal('recipient');
+            }
+        }
+        
+        // Event management functions
+        function addEvent() {
+            openSpecificModal('event');
+        }
+        
+        function handleAddEvent(e) {
+            e.preventDefault();
+            
+            const newEvent = {
+                id: nextEventId++,
+                title: document.getElementById('event-title').value,
+                date: document.getElementById('event-date').value,
+                type: document.getElementById('event-type').value,
+                description: document.getElementById('event-description').value,
+                gifts: 0
+            };
+            
+            events.push(newEvent);
+            saveToStorage();
+            renderEvents();
+            updateEventStats();
+            closeSpecificModal('event');
+            showNotification(`Event "${newEvent.title}" added!`, 'success');
+        }
+        
+        function renderEvents() {
+            const eventsContainer = document.querySelector('#events-calendar .grid');
+            if (!eventsContainer) return;
+            
+            eventsContainer.innerHTML = events.map((event, index) => {
+                const borderColors = ['var(--primary-black)', 'var(--dark-gray)', 'var(--accent-black)'];
+                const borderColor = borderColors[index % 3];
+                
+                return `
+                    <div class="border-l-4 p-4 rounded" style="background-color: var(--light-gray); border-color: ${borderColor};">
+                        <div class="flex items-center justify-between">
+                            <h4 class="font-semibold" style="color: var(--primary-black);">${event.title}</h4>
+                            <span class="text-sm" style="color: var(--dark-gray);">${formatDate(event.date)}</span>
+                        </div>
+                        <p class="text-sm mt-1" style="color: var(--dark-gray);">${event.gifts} gifts planned</p>
+                        <button onclick="deleteEvent(${event.id})" class="text-xs mt-2" style="color: var(--dark-gray);">Delete</button>
+                    </div>
+                `;
+            }).join('');
+        }
+        
+        function deleteEvent(eventId) {
+            events = events.filter(e => e.id !== eventId);
+            saveToStorage();
+            renderEvents();
+            showNotification('Event deleted!', 'success');
+        }
+        
+        function formatDate(dateStr) {
+            const date = new Date(dateStr);
+            return date.toLocaleDateString('en-US', { month: 'short', day: 'numeric' });
+        }
+        
+        function updateEventStats() {
+            const now = new Date();
+            const upcomingEvents = events.filter(event => new Date(event.date) > now).length;
+            const thisMonthEvents = events.filter(event => {
+                const eventDate = new Date(event.date);
+                return eventDate.getMonth() === now.getMonth() && eventDate.getFullYear() === now.getFullYear();
+            }).length;
+            
+            const upcomingEl = document.querySelector('#events-page .grid .bg-white:first-child p.text-3xl');
+            const thisMonthEl = document.querySelector('#events-page .grid .bg-white:nth-child(2) p.text-3xl');
+            const totalEl = document.querySelector('#events-page .grid .bg-white:last-child p.text-3xl');
+            
+            if (upcomingEl) upcomingEl.textContent = upcomingEvents;
+            if (thisMonthEl) thisMonthEl.textContent = thisMonthEvents;
+            if (totalEl) totalEl.textContent = events.length;
+        }
+        
+        // Wishlist management
+        function addWish() {
+            openSpecificModal('wish');
+        }
+        
+        function handleAddWish(e) {
+            e.preventDefault();
+            
+            const newWish = {
+                id: nextWishId++,
+                title: document.getElementById('wish-title').value,
+                recipient: document.getElementById('wish-recipient').value,
+                price: parseFloat(document.getElementById('wish-price').value),
+                priority: document.getElementById('wish-priority').value,
+                category: document.getElementById('wish-category').value,
+                notes: document.getElementById('wish-notes').value
+            };
+            
+            wishlist.push(newWish);
+            saveToStorage();
+            renderWishlist();
+            closeSpecificModal('wish');
+            showNotification(`Wish "${newWish.title}" added!`, 'success');
+        }
+        
+        // Settings management
+        function saveSettings() {
+            const nameInput = document.querySelector('#settings-page input[type="text"]');
+            const emailInput = document.querySelector('#settings-page input[type="email"]');
+            const budgetInput = document.querySelector('#settings-page input[type="number"]');
+            const currencySelect = document.querySelector('#settings-page select');
+            
+            if (nameInput) userSettings.name = nameInput.value;
+            if (emailInput) userSettings.email = emailInput.value;
+            if (budgetInput) budgetSettings.annualBudget = parseInt(budgetInput.value);
+            if (currencySelect) userSettings.currency = currencySelect.value;
+            
+            saveToStorage();
+            showNotification('Settings saved successfully!', 'success');
+        }
+        
+        function loadSettings() {
+            const nameInput = document.querySelector('#settings-page input[type="text"]');
+            const emailInput = document.querySelector('#settings-page input[type="email"]');
+            const budgetInput = document.querySelector('#settings-page input[type="number"]');
+            const currencySelect = document.querySelector('#settings-page select');
+            
+            // Load notification settings
+            const emailNotificationsToggle = document.getElementById('email-notifications');
+            const pushNotificationsToggle = document.getElementById('push-notifications');
+            const weeklySummaryToggle = document.getElementById('weekly-summary');
+            
+            if (nameInput) nameInput.value = userSettings.name;
+            if (emailInput) emailInput.value = userSettings.email;
+            if (budgetInput) budgetInput.value = budgetSettings.annualBudget;
+            if (currencySelect) currencySelect.value = userSettings.currency;
+            
+            if (emailNotificationsToggle) emailNotificationsToggle.checked = userSettings.emailNotifications;
+            if (pushNotificationsToggle) pushNotificationsToggle.checked = userSettings.pushNotifications;
+            if (weeklySummaryToggle) weeklySummaryToggle.checked = userSettings.weeklySubmary;
+        }
+
         // Analytics functions
         function updateAnalytics() {
             const totalValue = gifts.reduce((sum, gift) => sum + gift.price, 0);
@@ -1516,25 +2138,258 @@
 
         // Wishlist functions
         function renderWishlist() {
-            console.log('Wishlist rendered');
+            const wishlistItems = document.querySelector('#wishlist-page .grid');
+            if (!wishlistItems) return;
+            
+            wishlistItems.innerHTML = wishlist.map(wish => `
+                <div class="border rounded-lg p-4" style="border-color: var(--border-gray);">
+                    <div class="flex items-start justify-between mb-3">
+                        <h4 class="font-semibold" style="color: var(--primary-black);">${wish.title}</h4>
+                        <span class="px-2 py-1 text-xs font-semibold rounded-full status-badge ${getPriorityClass(wish.priority)}">${wish.priority}</span>
+                    </div>
+                    <p class="text-sm mb-2" style="color: var(--dark-gray);">For: ${wish.recipient}</p>
+                    <p class="text-sm mb-3" style="color: var(--dark-gray);">${wish.notes}</p>
+                    <div class="flex items-center justify-between">
+                        <span class="font-bold" style="color: var(--primary-black);">$${wish.price.toFixed(2)}</span>
+                        <div class="space-x-2">
+                            <button onclick="moveToGifts(${wish.id})" class="text-sm btn-secondary px-2 py-1 rounded">Move to Gifts</button>
+                            <button onclick="deleteWish(${wish.id})" class="text-sm" style="color: var(--dark-gray);"><i class="fas fa-trash"></i></button>
+                        </div>
+                    </div>
+                </div>
+            `).join('');
+            
+            updateWishlistStats();
+        }
+        
+        function getPriorityClass(priority) {
+            const classes = {
+                high: 'status-planned',
+                medium: 'status-purchased',
+                low: 'status-sent'
+            };
+            return classes[priority] || 'status-planned';
+        }
+        
+        function updateWishlistStats() {
+            const totalWishesEl = document.getElementById('total-wishes');
+            const highPriorityEl = document.getElementById('high-priority-wishes');
+            const completedWishesEl = document.getElementById('completed-wishes');
+            
+            if (totalWishesEl) totalWishesEl.textContent = wishlist.length;
+            if (highPriorityEl) highPriorityEl.textContent = wishlist.filter(w => w.priority === 'high').length;
+            if (completedWishesEl) completedWishesEl.textContent = Math.floor(wishlist.length * 0.2);
+        }
+        
+        function moveToGifts(wishId) {
+            const wish = wishlist.find(w => w.id === wishId);
+            if (wish) {
+                const newGift = {
+                    id: nextId++,
+                    recipient: wish.recipient,
+                    gift: wish.title,
+                    price: wish.price,
+                    status: 'planned',
+                    category: wish.category || 'Other',
+                    date: new Date().toISOString().split('T')[0]
+                };
+                
+                gifts.push(newGift);
+                wishlist = wishlist.filter(w => w.id !== wishId);
+                
+                saveToStorage();
+                renderWishlist();
+                updateKPIs();
+                
+                showNotification(`"${wish.title}" moved to gifts!`, 'success');
+            }
+        }
+        
+        function deleteWish(wishId) {
+            const wish = wishlist.find(w => w.id === wishId);
+            if (wish) {
+                wishlist = wishlist.filter(w => w.id !== wishId);
+                saveToStorage();
+                renderWishlist();
+                showNotification(`"${wish.title}" removed from wishlist!`, 'success');
+            }
         }
 
         // Budget functions  
         function updateBudgetData() {
-            const totalBudget = 2000;
             const totalSpent = gifts.reduce((sum, gift) => sum + gift.price, 0);
-            const remaining = totalBudget - totalSpent;
-            const progress = ((totalSpent / totalBudget) * 100).toFixed(1);
+            const remaining = budgetSettings.annualBudget - totalSpent;
+            const progress = ((totalSpent / budgetSettings.annualBudget) * 100).toFixed(1);
             
             const budgetEl = document.getElementById('total-budget');
             const spentEl = document.getElementById('total-spent');
             const remainingEl = document.getElementById('budget-remaining');
             const progressEl = document.getElementById('budget-progress');
             
-            if (budgetEl) budgetEl.textContent = `$${totalBudget.toLocaleString()}`;
+            if (budgetEl) budgetEl.textContent = `$${budgetSettings.annualBudget.toLocaleString()}`;
             if (spentEl) spentEl.textContent = `$${totalSpent.toLocaleString()}`;
             if (remainingEl) remainingEl.textContent = `$${remaining.toLocaleString()}`;
             if (progressEl) progressEl.textContent = `${progress}%`;
+            
+            // Update budget settings form
+            const annualBudgetInput = document.querySelector('#budget-page input[type="number"]');
+            const alertThresholdInput = document.querySelector('#budget-page input[type="number"]:nth-of-type(2)');
+            if (annualBudgetInput) annualBudgetInput.value = budgetSettings.annualBudget;
+            if (alertThresholdInput) alertThresholdInput.value = budgetSettings.alertThreshold;
+            
+            // Check for budget alerts
+            checkBudgetAlerts(progress);
+        }
+        
+        function checkBudgetAlerts(progress) {
+            if (progress >= budgetSettings.alertThreshold) {
+                showNotification(`Budget Alert: ${progress}% of budget used!`, 'info');
+            }
+        }
+        
+        // Notification settings update
+        function updateNotificationSetting(setting, value) {
+            userSettings[setting] = value;
+            saveToStorage();
+            showNotification('Notification settings updated!', 'info');
+        }
+        
+        function updateBudgetSettings() {
+            const annualBudgetInput = document.querySelector('#budget-page input[type="number"]');
+            const alertThresholdInput = document.querySelector('#budget-page input[type="number"]:nth-of-type(2)');
+            
+            if (annualBudgetInput && alertThresholdInput) {
+                budgetSettings.annualBudget = parseInt(annualBudgetInput.value);
+                budgetSettings.alertThreshold = parseInt(alertThresholdInput.value);
+                saveToStorage();
+                updateBudgetData();
+                showNotification('Budget settings updated!', 'success');
+            }
+        }
+        
+        // Data management functions
+        function exportData() {
+            const data = {
+                gifts: gifts,
+                recipients: recipients,
+                wishlist: wishlist,
+                events: events,
+                budgetSettings: budgetSettings,
+                userSettings: userSettings,
+                exportDate: new Date().toISOString()
+            };
+            
+            const dataStr = JSON.stringify(data, null, 2);
+            const dataBlob = new Blob([dataStr], {type: 'application/json'});
+            const url = URL.createObjectURL(dataBlob);
+            
+            const link = document.createElement('a');
+            link.href = url;
+            link.download = `gift-tracker-export-${new Date().toISOString().split('T')[0]}.json`;
+            document.body.appendChild(link);
+            link.click();
+            document.body.removeChild(link);
+            URL.revokeObjectURL(url);
+            
+            showNotification('Data exported successfully!', 'success');
+        }
+        
+        function importData() {
+            const input = document.createElement('input');
+            input.type = 'file';
+            input.accept = '.json';
+            input.onchange = function(e) {
+                const file = e.target.files[0];
+                if (file) {
+                    const reader = new FileReader();
+                    reader.onload = function(e) {
+                        try {
+                            const data = JSON.parse(e.target.result);
+                            
+                            if (data.gifts) gifts = data.gifts;
+                            if (data.recipients) recipients = data.recipients;
+                            if (data.wishlist) wishlist = data.wishlist;
+                            if (data.events) events = data.events;
+                            if (data.budgetSettings) budgetSettings = data.budgetSettings;
+                            if (data.userSettings) userSettings = data.userSettings;
+                            
+                            nextId = Math.max(...gifts.map(g => g.id), 0) + 1;
+                            nextWishId = Math.max(...wishlist.map(w => w.id), 0) + 1;
+                            nextEventId = Math.max(...events.map(e => e.id), 0) + 1;
+                            
+                            saveToStorage();
+                            
+                            // Refresh all displays
+                            renderGifts();
+                            renderRecipients();
+                            renderWishlist();
+                            renderEvents();
+                            updateKPIs();
+                            updateRecipientStats();
+                            updateWishlistStats();
+                            updateBudgetData();
+                            updateEventStats();
+                            loadSettings();
+                            
+                            showNotification('Data imported successfully!', 'success');
+                        } catch (error) {
+                            showNotification('Error importing data: Invalid file format', 'error');
+                        }
+                    };
+                    reader.readAsText(file);
+                }
+            };
+            input.click();
+        }
+        
+        function clearAllData() {
+            if (confirm('Are you sure you want to clear ALL data? This action cannot be undone!')) {
+                localStorage.removeItem('giftTracker_gifts');
+                localStorage.removeItem('giftTracker_recipients');
+                localStorage.removeItem('giftTracker_wishlist');
+                localStorage.removeItem('giftTracker_events');
+                localStorage.removeItem('giftTracker_budget');
+                localStorage.removeItem('giftTracker_settings');
+                
+                // Reset to default data
+                gifts = [];
+                recipients = [];
+                wishlist = [];
+                events = [];
+                budgetSettings = { annualBudget: 2000, alertThreshold: 80, emergencyFund: 10 };
+                userSettings = { name: 'John Smith', email: 'john@example.com', currency: 'USD', emailNotifications: true, pushNotifications: false, weeklySubmary: true };
+                
+                nextId = 1;
+                nextWishId = 1;
+                nextEventId = 1;
+                
+                // Refresh all displays
+                renderGifts();
+                renderRecipients();
+                renderWishlist();
+                renderEvents();
+                updateKPIs();
+                updateRecipientStats();
+                updateWishlistStats();
+                updateBudgetData();
+                updateEventStats();
+                loadSettings();
+                
+                showNotification('All data cleared successfully!', 'success');
+            }
+        }
+        
+        function resetSettings() {
+            if (confirm('Reset all settings to default values?')) {
+                budgetSettings = { annualBudget: 2000, alertThreshold: 80, emergencyFund: 10 };
+                userSettings = { name: 'John Smith', email: 'john@example.com', currency: 'USD', emailNotifications: true, pushNotifications: false, weeklySubmary: true };
+                
+                saveToStorage();
+                loadSettings();
+                updateBudgetData();
+                
+                showNotification('Settings reset to defaults!', 'success');
+            }
         }
 
         // Initialize page loading animation
